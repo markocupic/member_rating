@@ -1,0 +1,123 @@
+/* my avatar */
+.mod_member_rating #avatar .image_container img {
+    display: inline;
+}
+.mod_member_rating #avatar .image_container {
+    border: 1px solid gray;
+    width: auto;
+    display: inline-block;
+    position: relative;
+}
+.mod_member_rating #avatar .gradeLabel {
+    position: absolute;
+    top: -4px;
+    right: -20px;
+}
+
+/* socialmedia links */
+.mod_member_rating #socialmediaLinks .image_container {
+    display: inline;
+    margin-right: 10px;
+    position: relative;
+}
+
+.mod_member_rating #socialmediaLinks .removeSocialmediaIcon {
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+}
+
+/* comments */
+.mod_member_rating .comment {
+    position: relative;
+}
+/* top3*/
+.mod_member_rating #top3 .col_1 {
+    position: absolute;
+    left: 0;
+}
+.mod_member_rating #top3 .col_2 {
+    position: relative;
+    min-height: 80px;
+    top: 0;
+}
+
+/* top3 */
+.mod_member_rating #top3 .comment {
+    position: relative;
+}
+.mod_member_rating #top3 .col_0 {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.mod_member_rating #top3 .col_1 {
+    position: relative;
+    top: 0;
+    left: 50px;
+    min-height: 80px;
+}
+
+/* all ratings */
+.mod_member_rating #allRatings .comment {
+    position: relative;
+}
+.mod_member_rating #allRatings .col_0 {
+    display: none;
+}
+.mod_member_rating #allRatings .col_1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.mod_member_rating #allRatings .col_2 {
+    position: relative;
+    top: 0;
+    left: 50px;
+    min-height: 80px;
+}
+/* only display visibility icon to comment-owner*/
+.mod_member_rating #allRatings .myprofile .col_0 {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.mod_member_rating #allRatings .myprofile .col_1 {
+    position: absolute;
+    top: 0;
+    left: 50px;
+}
+.mod_member_rating #allRatings .myprofile .col_2 {
+    position: relative;
+    top: 0;
+    left: 140px;
+    min-height: 80px;
+}
+
+/* my ratings */
+.mod_member_rating #myRatings .comment {
+    position: relative;
+}
+.mod_member_rating #myRatings .col_0 {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.mod_member_rating #myRatings .col_1 {
+    position: absolute;
+    top: 0;
+    left: 50px;
+}
+.mod_member_rating #myRatings .col_2 {
+    position: relative;
+    top: 0;
+    left: 140px;
+    min-height: 80px;
+}
+
+/*starbox*/
+.mod_member_rating #starbox {
+    display: inline;
+}
+
