@@ -19,12 +19,15 @@
     display: inline;
     margin-right: 10px;
     position: relative;
+    z-index:1;
+
 }
 
 .mod_member_rating #socialmediaLinks .removeSocialmediaIcon {
     position: absolute;
     right: -5px;
     bottom: -5px;
+    z-index:2;
 }
 
 /* comments */

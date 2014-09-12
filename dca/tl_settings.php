@@ -14,7 +14,7 @@
  * Add to palette
  */
 
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{member_rating_legend:hide},gradeLabeling,customImageDir';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{member_rating_legend:hide},gradeLabeling,customImageDir,socialmediaLinks';
 
 /**
  * Add fields
@@ -22,13 +22,22 @@ $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{member_rating_leg
 $GLOBALS['TL_DCA']['tl_settings']['fields']['gradeLabeling'] = array(
        'label' => &$GLOBALS['TL_LANG']['tl_settings']['gradeLabeling'],
        'inputType' => 'text',
-       'default' => '0|Anwärter|thumbsup.png###500|Cooler Typ|star.png###1000|Gottheit|trophy.png',
-       'eval' => array('tl_class' => 'long', )
+       'eval' => array('tl_class' => 'long',)
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['customImageDir'] = array(
-       'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['customImageDir'],
-       'exclude'                 => true,
-       'inputType'               => 'fileTree',
-       'eval'                    => array('files'=>false, 'fieldType'=>'radio', 'mandatory'=>false, 'tl_class'=>'clr'),
+       'label' => &$GLOBALS['TL_LANG']['tl_settings']['customImageDir'],
+       'inputType' => 'fileTree',
+       'eval' => array(
+              'files' => false,
+              'fieldType' => 'radio',
+              'mandatory' => false,
+              'tl_class' => 'clr'
+       ),
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['socialmediaLinks'] = array(
+       'label' => &$GLOBALS['TL_LANG']['tl_settings']['socialmediaLinks'],
+       'inputType' => 'text',
+       'eval' => array('tl_class' => 'long',)
 );

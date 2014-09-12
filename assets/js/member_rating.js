@@ -12,25 +12,29 @@ window.addEvent('domready', function () {
             title: objLang.remove_link
         });
 
-        deleteIcon.addClass('removeSocialmediaIcon');
-        deleteIcon.inject(imgContainer, 'bottom');
-        var smIcon = imgContainer.getElements('.socialmediaIcon')[0];
+        if((deleteIcon = imgContainer.getElements('.removeSocialmediaIcon')[0])){
+            deleteIcon.inject(imgContainer, 'bottom');
+            var smLink = imgContainer.getElements('a.socialmediaLink')[0];
 
-        // ajax request: delete socialmedia link
-        deleteIcon.addEvent('click', function () {
-            var xhr = new XMLHttpRequest();
-            var params = "?isAjaxRequest=true&act=delSocialMediaLink&type=" + smIcon.getProperty('alt');
-            xhr.open("GET", document.URL + params, true);
+            // ajax request: delete socialmedia link
+            deleteIcon.addEvent('click', function () {
+                var data = new FormData();
+                data.append('REQUEST_TOKEN', ModuleVars.REQUEST_TOKEN);
+                data.append('type', smLink.getAttribute('href'));
+                var xhr = new XMLHttpRequest();
+                var params = "?isAjaxRequest=true&act=delSocialMediaLink";
+                xhr.open("POST", document.URL + params, true);
 
-            // Call a function when the state changes.
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    imgContainer.destroy();
+                // Call a function when the state changes.
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        imgContainer.destroy();
+                    }
                 }
-            }
-            xhr.send(params);
-            xhr.send(params);
-        });
+                xhr.send(data);
+            });
+        }
+
     });
 
 

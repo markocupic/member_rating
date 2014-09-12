@@ -20,10 +20,9 @@ class MemberRating extends \Module
         */
        protected $strTemplate = 'mod_member_rating';
 
-       protected $arrRanking = array(
-              'cool' => 500,
-              'verycool' => 1000
-       );
+       protected $ratedUser;
+
+       protected $loggedInUser;
 
        /**
         * @var string
@@ -32,7 +31,8 @@ class MemberRating extends \Module
 
 
        /**
-        *
+        * @param $objModule
+        * @param string $strColumn
         */
        public function __construct($objModule, $strColumn = 'main')
        {
@@ -49,41 +49,7 @@ class MemberRating extends \Module
        public function generate()
        {
 
-              // activate comment by token via url
-              if (strlen(\Input::get('activation_token')))
-              {
-                     $objComments = \CommentsModel::findByActivation_token(\Input::get('activation_token'));
-                     if ($objComments === null)
-                     {
-                            die(utf8_decode('Ungültiges oder abgelaufenes Aktivierungstoken!'));
-                     }
-                     if (\Input::get('del') == 'true')
-                     {
-                            // delete comment
-                            $objComments->delete();
-                     }
-                     elseif (\Input::get('publish') == 'true')
-                     {
-                            // publish comment
-                            $objComments->published = 1;
-                            $objComments->activation_token = '';
-                            $objComments->save();
-                     }
-                     else
-                     {
-                            //
-                     }
-
-                     if ($this->emailNotifyPage)
-                     {
-                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage)) !== null)
-                            {
-                                   $this->redirect($this->generateFrontendUrl($objNextPage->row()));
-                            }
-                     }
-                     exit();
-              }
-
+              // Backend
               if (TL_MODE == 'BE')
               {
                      $objTemplate = new \BackendTemplate('be_wildcard');
@@ -97,12 +63,69 @@ class MemberRating extends \Module
                      return $objTemplate->parse();
               }
 
+
+              // Frontend
+
               // set the item from the auto_item parameter
               if ($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
               {
                      \Input::setGet('member', \Input::get('auto_item'));
               }
 
+
+              // activate comment by token via url
+              if (strlen(\Input::get('activation_token')))
+              {
+                     $dbChange = false;
+                     $objComments = \CommentsModel::findByActivation_token(\Input::get('activation_token'));
+                     if ($objComments === null)
+                     {
+                            die(utf8_decode('Ungültiges oder abgelaufenes Aktivierungstoken!'));
+                     }
+
+                     // delete or publish comment
+                     if (\Input::get('del') == 'true')
+                     {
+                            $dbChange = true;
+                            $objComments->delete();
+                     }
+                     elseif (\Input::get('publish') == 'true')
+                     {
+                            $dbChange = true;
+                            $objComments->published = 1;
+                            $objComments->activation_token = '';
+                            $objComments->save();
+                     }
+                     else
+                     {
+                            //
+                     }
+
+                     if ($this->emailNotifyPage && $dbChange === true)
+                     {
+                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage)) !== null)
+                            {
+                                   $this->redirect($this->generateFrontendUrl($objNextPage->row()));
+                            }
+                     }
+                     else
+                     {
+                            if ($dbChange === true)
+                            {
+                                   die('Datenbankänderungen wurden übernommen.');
+                            }
+                     }
+                     exit();
+              }
+
+              // set the loggedInUser var
+              if (FE_USER_LOGGED_IN)
+              {
+                     $this->User = \FrontendUser::getInstance();
+                     $this->loggedInUser = $this->User;
+              }
+
+              // set the ratedUser var
               $idRatedMember = \Input::get('member');
               $this->ratedUser = \MemberModel::findByPk($idRatedMember);
               if ($this->ratedUser === null)
@@ -110,18 +133,11 @@ class MemberRating extends \Module
                      return;
               }
 
-
-              if (FE_USER_LOGGED_IN)
-              {
-                     $this->User = \FrontendUser::getInstance();
-              }
-
               // overwrite default imageDir if a custom directory was selected
               if (($imageDir = MemberRatingHelper::getImageDir($this)) !== null)
               {
                      $this->imageDir = $imageDir;
               }
-
 
               return parent::generate();
 
@@ -134,23 +150,10 @@ class MemberRating extends \Module
        protected function compile()
        {
 
-              // set the item from the auto_item parameter
-              if ($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
-              {
-                     \Input::setGet('member', \Input::get('auto_item'));
-              }
-
-
-              if (FE_USER_LOGGED_IN)
-              {
-                     $this->loggedInUser = $this->User;
-              }
-
               $this->loadDataContainer('tl_comments');
               $this->loadDataContainer('tl_member');
               $this->loadLanguageFile('tl_comments');
               $this->loadLanguageFile('tl_member');
-
 
               // handle Ajax requests
               if (\Input::get('isAjaxRequest'))
@@ -159,44 +162,42 @@ class MemberRating extends \Module
                      exit();
               }
 
-              if (FE_USER_LOGGED_IN)
+              // ***** PERSONAL SECTION *****
+
+              // get avatar of logged in user
+              $objFile = \FilesModel::findByUuid($this->ratedUser->avatar);
+              if ($objFile !== null)
               {
-                     // get avatar of logged in user
-                     $objFile = \FilesModel::findByUuid($this->User->avatar);
-                     if ($objFile !== null)
+                     if (is_file(TL_ROOT . '/' . $objFile->path))
                      {
-                            if (is_file(TL_ROOT . '/' . $objFile->path))
-                            {
-                                   $this->loggedInUser->avatar = \Image::get($objFile->path, 150, 150, 'center_center');
-                            }
+                            $this->ratedUser->large_avatar = \Image::get($objFile->path, 150, 150, 'center_center');
                      }
-                     else
+              }
+              else
+              {
+                     $path = $this->imageDir . '/avatar_default.jpg';
+                     if (is_file(TL_ROOT . '/' . $path))
                      {
-                            $path = $this->imageDir . '/avatar_default.jpg';
-                            if (is_file(TL_ROOT . '/' . $path))
-                            {
-                                   $this->loggedInUser->avatar = \Image::get($path, 150, 150, 'center_center');
-                            }
+                            $this->ratedUser->large_avatar = \Image::get($path, 150, 150, 'center_center');
                      }
-
-                     // get score  of logged in user
-                     $objPoints = $this->Database->prepare("SELECT SUM(score) as score FROM tl_comments WHERE source = ? AND parent = ? AND published = ?")->execute('tl_member', $this->loggedInUser->id, 1);
-                     $this->loggedInUser->score = $objPoints->score <= 0 ? '0' : $objPoints->score;
-
-                     // get grade of logged in user
-                     $arrGrade = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
-                     $this->loggedInUser->gradeLabel = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
-                     $this->loggedInUser->gradeIcon = MemberRatingHelper::getGrade($this->loggedInUser->id, 'icon');
               }
 
-              // get score of rated user
-              $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
+              // socialmedia Icons
+              if (empty($this->ratedUser->socialmediaLinks))
+              {
+                     $this->ratedUser->socialmediaLinks = null;
+              }
+              else
+              {
+                     $this->ratedUser->socialmediaLinks = deserialize($this->ratedUser->socialmediaLinks);
+              }
 
-              // get grade
+              // get score and grade of rated user
+              $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
               $this->ratedUser->gradeLabel = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
               $this->ratedUser->gradeIcon = MemberRatingHelper::getGrade($this->loggedInUser->id, 'icon');
 
-              // get all ratings
+              // ***** ALL RATINGS SECTION *****
               if ($this->ratedUser->id == $this->loggedInUser->id)
               {
                      $strSql = "SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? ORDER BY dateOfCreation DESC, score DESC";
@@ -237,8 +238,7 @@ class MemberRating extends \Module
               }
               $this->ratedUser->allRatings = count($arrAllRatings) ? $arrAllRatings : false;
 
-
-              // get top 3
+              // ***** TOP 3 SECTION *****
               $objRatings = $this->Database->prepare("SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = ? ORDER BY score DESC, dateOfCreation DESC")->limit(3)->execute('tl_member', $this->ratedUser->id, 1);
               $arrTop3 = array();
               while ($row = $objRatings->fetchAssoc())
@@ -269,7 +269,7 @@ class MemberRating extends \Module
               }
               $this->ratedUser->top3 = count($arrTop3) > 2 ? $arrTop3 : false;
 
-              // my ratings
+              // ***** MY RATINGS SECTION *****
               if (FE_USER_LOGGED_IN)
               {
                      $strSql = "SELECT * FROM tl_comments WHERE source = ? AND owner = ? ORDER BY dateOfCreation DESC, score DESC";
@@ -306,27 +306,46 @@ class MemberRating extends \Module
                      $this->loggedInUser->myRatings = count($arrMyRatings) ? $arrMyRatings : false;
               }
 
-
               $this->Template->loggedInUser = $this->loggedInUser;
               $this->Template->ratedUser = $this->ratedUser;
-
-              if (FE_USER_LOGGED_IN)
-              {
-                     $this->generateSocialMediaLinksForm();
-                     $this->generateVotingForm();
-              }
-
+              $this->Template->imageDir = $this->imageDir;
               $this->Template->module = $this;
 
-              // add javascript language file object to template
+              // add javascript language-file-object to template
               $strLang = "objLang = {";
               foreach ($GLOBALS['TL_LANG']['MOD']['member_rating'] as $k => $v)
               {
-                     $strLang .= $k . ": '" . $v . "',";
+                     if (is_array($v))
+                     {
+                            $strLang .= $k . ": {";
+                            foreach ($v as $kk => $vv)
+                            {
+                                   $strLang .= $kk . ": '" . $vv . "',";
+                            }
+                            $strLang .= "},";
+
+                     }
+                     else
+                     {
+                            $strLang .= $k . ": '" . $v . "',";
+                     }
               }
               $strLang .= "};";
-              $this->Template->languageObject = $strLang;
+              $this->Template->JsLanguageObject = str_replace(',}', '}', $strLang) . "\r\n";
+              $this->Template->JsVarsObject = "ModuleVars = {REQUEST_TOKEN: '" . REQUEST_TOKEN . "'};" . "\r\n";
 
+
+              if (FE_USER_LOGGED_IN)
+              {
+                     if ($this->loggedInUser->id == $this->ratedUser->id)
+                     {
+                            $this->generateSocialMediaLinksForm();
+                     }
+                     if ($this->loggedInUser->id != $this->ratedUser->id)
+                     {
+                            $this->generateVotingForm();
+                     }
+              }
        }
 
 
@@ -340,6 +359,7 @@ class MemberRating extends \Module
               {
                      return;
               }
+
 
               $strFields = '';
               $scoreError = false;
@@ -449,51 +469,6 @@ class MemberRating extends \Module
        }
 
 
-       protected function notifyUser($objComment)
-       {
-
-              global $objPage;
-              if ($this->ratedUser->email == '')
-              {
-                     return;
-              }
-              $objTemplate = new \FrontendTemplate('member_rating_email_notification');
-              $objTemplate->name = $this->ratedUser->firstname;
-              $objTemplate->author = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
-              $objTemplate->comment = nl2br($objComment->comment);
-              $objTemplate->score = $objComment->score;
-              $objTemplate->link = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $this->generateFrontendUrl($objPage->row(), '', $objPage->language) . '?publish=true&activation_token=' . $objComment->activation_token;
-              $objTemplate->link_del = 'http://' . $_SERVER['SERVER_NAME'] . '/' . $this->generateFrontendUrl($objPage->row(), '', $objPage->language) . '?del=true&activation_token=' . $objComment->activation_token;
-              $strContent = $objTemplate->parse();
-
-              // Mail
-              $objEmail = new \Email();
-              $objEmail->subject = 'Neuer Kommentar von ' . $objTemplate->author . ' auf ' . $_SERVER['SERVER_NAME'];
-
-              $strContent = $this->replaceInsertTags($strContent);
-              $objEmail->html = $strContent;
-
-              // text version
-              $strContent = \String::decodeEntities($strContent);
-              $strContent = strip_tags($strContent);
-              $strContent = str_replace(array(
-
-                                               '[&]',
-                                               '[lt]',
-                                               '[gt]'
-                                        ), array(
-                                               '&',
-                                               '<',
-                                               '>'
-                                        ), $strContent);
-              $objEmail->text = $strContent;
-
-              $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
-              $objEmail->fromName = $GLOBALS['TL_ADMIN_NAME'];
-              $objEmail->sendTo($this->ratedUser->email);
-       }
-
-
        /**
         * handle ajax requests
         */
@@ -501,17 +476,20 @@ class MemberRating extends \Module
        {
 
               // delete socialmedia links
-              if (\Input::get('act') == 'delSocialMediaLink' && \Input::get('type'))
+              if (\Input::get('act') == 'delSocialMediaLink' && \Input::post('type'))
               {
                      if (FE_USER_LOGGED_IN)
                      {
                             $arrSocialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
-                            unset($arrSocialmediaLinks[\Input::get('type')]);
-                            $this->loggedInUser->socialmediaLinks = serialize($arrSocialmediaLinks);
+                            if (array_search(\Input::post('type'), $arrSocialmediaLinks) !== false)
+                            {
+                                   $key = array_search(\Input::post('type'), $arrSocialmediaLinks);
+                                   unset($arrSocialmediaLinks[$key]);
+                            }
+                            $this->loggedInUser->socialmediaLinks = serialize(array_values($arrSocialmediaLinks));
                             $this->loggedInUser->save();
                      }
               }
-
 
               // toggle visibility (publish or unpublish)
               if (\Input::get('act') == 'toggleVisibility' && \Input::get('id'))
@@ -562,42 +540,13 @@ class MemberRating extends \Module
                             $arrSocialMediaLinks = deserialize($objMember->socialmediaLinks);
                             $this->Template->loggedInUser->socialmediaLinks = $arrSocialMediaLinks;
                             $objWidget->validate();
-                            if (!$objWidget->hasErrors() && \Input::post('socialmediaLinks') != '')
+                            if (!$objWidget->hasErrors() && trim(\Input::post('socialmediaLinks')) != '')
                             {
                                    $value = \Input::post('socialmediaLinks');
-                                   if (stripos($value, 'facebook') !== false)
-                                   {
-                                          $case = 'facebook';
-                                   }
-                                   elseif (stripos($value, 'linkedin') !== false)
-                                   {
-                                          $case = 'linkedin';
-                                   }
-                                   elseif (stripos($value, 'twitter') !== false)
-                                   {
-                                          $case = 'twitter';
-                                   }
-                                   elseif (stripos($value, 'plus.google') !== false)
-                                   {
-                                          $case = 'googleplus';
-                                   }
-                                   elseif (stripos($value, 'instagram') !== false)
-                                   {
-                                          $case = 'instagram';
-                                   }
-                                   else
-                                   {
-                                          $case = null;
-                                          $objWidget->addError('Bitte geben Sie einen gültigen Pfad zu einer social media Plattform an.');
-                                          $objWidget->value = 'http://';
-                                   }
-                                   if ($case !== null)
-                                   {
-                                          $arrSocialMediaLinks[$case] = $value;
-                                          $objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
-                                          $objMember->save();
-                                          $this->reload();
-                                   }
+                                   $arrSocialMediaLinks[] = $value;
+                                   $objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
+                                   $objMember->save();
+                                   $this->reload();
                             }
                      }
               }
@@ -624,5 +573,72 @@ class MemberRating extends \Module
                             }
                      }
               }
+       }
+
+
+       /**
+        * @param $objComment
+        */
+       public function notifyUser($objComment)
+       {
+
+              global $objPage;
+              $objRatedMember = \MemberModel::findByPk($objComment->parent);
+              if ($objRatedMember === null)
+              {
+                     return;
+              }
+
+              if ($objRatedMember->email == '')
+              {
+                     return;
+              }
+
+              $objAuthor = \MemberModel::findByPk($objComment->owner);
+              if ($objAuthor === null)
+              {
+                     return;
+              }
+
+              $objTemplate = new \FrontendTemplate('member_rating_email_notification');
+              $objTemplate->name = $objRatedMember->firstname;
+              $objTemplate->author = $objAuthor->firstname . ' ' . $objAuthor->lastname;
+              $objTemplate->comment = nl2br($objComment->comment);
+              $objTemplate->score = $objComment->score;
+              $objTemplate->link = 'http://' . $_SERVER['SERVER_NAME'] . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?publish=true&activation_token=' . $objComment->activation_token;
+              $objTemplate->link_del = 'http://' . $_SERVER['SERVER_NAME'] . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?del=true&activation_token=' . $objComment->activation_token;
+              $strContent = $objTemplate->parse();
+
+              // Mail
+              $objEmail = new \Email();
+              $objEmail->subject = 'Neuer Kommentar von ' . $objTemplate->author . ' auf ' . $_SERVER['SERVER_NAME'];
+
+              $strContent = $this->replaceInsertTags($strContent);
+              $objEmail->html = $strContent;
+
+              // text version
+              $strContent = \String::decodeEntities($strContent);
+              $strContent = strip_tags($strContent);
+              $strContent = str_replace(array(
+
+                                               '[&]',
+                                               '[lt]',
+                                               '[gt]'
+                                        ), array(
+                                               '&',
+                                               '<',
+                                               '>'
+                                        ), $strContent);
+              $objEmail->text = $strContent;
+
+              $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
+              $objEmail->fromName = $GLOBALS['TL_ADMIN_NAME'];
+              $objEmail->sendTo($objRatedMember->email);
+       }
+
+
+       public function generateSocialmediaIcon($strHref)
+       {
+              return '<img src="' . MemberRatingHelper::getSocialmediaIconSRC($strHref) . '" alt="socialmedia_icon" class="socialmediaIcon">';
        }
 }

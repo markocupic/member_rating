@@ -4,38 +4,41 @@
         <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
     <?php endif; ?>
 
-    <?php if($this->loggedInUser): ?>
-        <!-- avatar & user information of logged in user -->
-        <div id="avatar">
+    <!-- avatar & user information of logged in user -->
+    <div id="avatar">
+        <div class="image_container">
+            <img src="<?php echo $this->ratedUser->large_avatar; ?>" alt="<?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?>">
+            <?php if($this->ratedUser->gradeIcon): ?>
+                <img src="<?php echo $this->ratedUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div id="gradeBox">
+        <h3><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h3>
+        <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
+        <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+    </div>
+
+    <!-- socialmedia icons -->
+    <?php if($this->ratedUser->socialmediaLinks): ?>
+        <div id="socialmediaLinks">
+        <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
             <div class="image_container">
-                <img src="<?php echo $this->loggedInUser->avatar; ?>" alt="{{user::firstname}} {{user::lastname}}">
-                <?php if($this->loggedInUser->gradeIcon): ?>
-                    <img src="<?php echo $this->loggedInUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+                <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
+                    <?php echo $this->module->generateSocialmediaIcon($href); ?>
+                </a>
+                <?php if($this->ratedUser->id == $this->loggedInUser->id): ?>
+                    <img src="<?php echo $this->imageDir; ?>/cancel-circle.png" alt="delete_link" title="Link entfernen" class="removeSocialmediaIcon">
                 <?php endif; ?>
             </div>
+        <?php endforeach; ?>
         </div>
+    <?php endif; ?>
 
-        <div id="gradeBox">
-            <h3>{{user::firstname}} {{user::lastname}}</h3>
-            <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
-            <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
-        </div>
-        
-        <!-- socialmedia icons -->
-        <?php if($this->loggedInUser->socialmediaLinks): ?>
-            <div id="socialmediaLinks">
-            <?php foreach($this->loggedInUser->socialmediaLinks as $k => $v): ?>
-                <div class="image_container">
-                    <a href="<?php echo $v; ?>" title="<?php echo $k; ?>">
-                        <img src="<?php echo TL_FILES_URL; ?>system/modules/member_rating/assets/images/socialmedia/<?php echo $k; ?>.png" alt="<?php echo $k; ?>" class="socialmediaIcon">
-                    </a>
-                </div>
-            <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+    {{br}}
 
-        {{br}}
-
+    <?php if($this->ratedUser->id == $this->loggedInUser->id): ?>
         <!-- socialmedia links form -->
         <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->socialMediaFormId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
 
@@ -54,17 +57,6 @@
         </form>
     <?php endif; ?>
 
-
-    <!-- rated user description box -->
-    <div id="userDescription">
-        <div class="nameBox">
-            <h2><?php echo $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname; ?> </h2>
-        </div>
-        <div class="scoreBox">
-            <?php if($this->ratedUser->scoreLevel): ?><img src="" alt="scoreLevel"><?php echo $this->ratedUser->scoreLevel; ?>><?php endif; ?>
-            <span class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['current_score_of']; ?> <?php echo  $this->ratedUser->firstname; ?>: <?php echo  $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>
-        </div>
-    </div>
 
     {{br}}
     {{br}}
@@ -203,7 +195,8 @@
          <?php endif; ?>
     <?php endif; ?>
         <script>
-            <?php echo $this->languageObject; ?>
+            <?php echo $this->JsLanguageObject; ?>
+            <?php echo $this->JsVarsObject; ?>
         </script>
 
 </div>

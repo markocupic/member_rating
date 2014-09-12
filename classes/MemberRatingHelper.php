@@ -29,6 +29,51 @@ class MemberRatingHelper extends \System
 
 
        /**
+        * @param $strLink
+        * @return string
+        */
+       public static function getSocialmediaIconSRC($strLink)
+       {
+
+              $arrNeedle = array();
+              $arrIcons = array();
+              if (trim($GLOBALS['TL_CONFIG']['socialmediaLinks']) != '')
+              {
+                     foreach (explode('***', trim($GLOBALS['TL_CONFIG']['socialmediaLinks'])) as $item)
+                     {
+                            $arrSMBrand = explode('|', $item);
+                            if (is_array($arrSMBrand))
+                            {
+                                   if (count($arrSMBrand) == 2)
+                                   {
+                                          $arrNeedle[] = $arrSMBrand[0];
+                                          $arrIcons[] = $arrSMBrand[1];
+                                   }
+                            }
+                     }
+              }
+
+              foreach ($arrNeedle as $key => $needle)
+              {
+                     if (strpos($strLink, $needle) !== false)
+                     {
+                            $icon = self::getImageDir() . '/socialmedia/' . $arrIcons[$key];
+                            if (is_file(TL_ROOT . '/' . $icon))
+                            {
+                                   return $icon;
+                            }
+                     }
+              }
+              $icon = self::getImageDir() . '/socialmedia/default.png';
+              if (is_file(TL_ROOT . '/' . $icon))
+              {
+                     return $icon;
+              }
+
+       }
+
+
+       /**
         * @param $score
         * @return array
         */
@@ -71,7 +116,7 @@ class MemberRatingHelper extends \System
                             if ($score >= $arrGrade['score'])
                             {
                                    $arrReturn['label'] = $arrGrade['label'];
-                                   $icon = 'system/modules/member_rating/assets/images/' . $arrGrade['icon'];
+                                   $icon = self::getImageDir() . '/' . $arrGrade['icon'];
                                    if (is_file(TL_ROOT . '/' . $icon))
                                    {
                                           $arrReturn['icon'] = $icon;
@@ -120,8 +165,10 @@ class MemberRatingHelper extends \System
        public static function getImageDir()
        {
 
-              if(!empty($GLOBALS['TL_CONFIG']['customImageDir']) )
-              $objFile = \FilesModel::findByUuid(trim($GLOBALS['TL_CONFIG']['customImageDir']));
+              if (!empty($GLOBALS['TL_CONFIG']['customImageDir']))
+              {
+                     $objFile = \FilesModel::findByUuid(trim($GLOBALS['TL_CONFIG']['customImageDir']));
+              }
               if ($objFile !== null)
               {
                      if (is_dir(TL_ROOT . '/' . $objFile->path))
@@ -131,4 +178,5 @@ class MemberRatingHelper extends \System
               }
               return null;
        }
+
 }
