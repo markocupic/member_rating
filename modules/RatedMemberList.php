@@ -95,7 +95,7 @@ class RatedMemberList extends \Module
                      {
                             if (is_file(TL_ROOT . '/' . $objFile->path))
                             {
-                                   $row['avatar'] = \Image::get($objFile->path, 50, 50, 'center_center');
+                                   $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
                             }
                      }
                      else
@@ -103,7 +103,7 @@ class RatedMemberList extends \Module
                             $path = $this->imageDir . '/avatar_default.jpg';
                             if (is_file(TL_ROOT . '/' . $path))
                             {
-                                   $row['avatar'] = \Image::get($path, 50, 50, 'center_center');
+                                   $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
                             }
                      }
                      $arrRows[] = $row;

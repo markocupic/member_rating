@@ -119,7 +119,7 @@ class MemberRatingHelper extends \System
                                    $icon = self::getImageDir() . '/' . $arrGrade['icon'];
                                    if (is_file(TL_ROOT . '/' . $icon))
                                    {
-                                          $arrReturn['icon'] = $icon;
+                                          $arrReturn['icon'] = TL_FILES_URL . $icon;
                                    }
                                    break;
                             }

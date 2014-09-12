@@ -170,7 +170,7 @@ class MemberRating extends \Module
               {
                      if (is_file(TL_ROOT . '/' . $objFile->path))
                      {
-                            $this->ratedUser->large_avatar = \Image::get($objFile->path, 150, 150, 'center_center');
+                            $this->ratedUser->large_avatar = TL_FILES_URL . \Image::get($objFile->path, 150, 150, 'center_center');
                      }
               }
               else
@@ -178,7 +178,7 @@ class MemberRating extends \Module
                      $path = $this->imageDir . '/avatar_default.jpg';
                      if (is_file(TL_ROOT . '/' . $path))
                      {
-                            $this->ratedUser->large_avatar = \Image::get($path, 150, 150, 'center_center');
+                            $this->ratedUser->large_avatar = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
                      }
               }
 
@@ -220,7 +220,7 @@ class MemberRating extends \Module
                             {
                                    if (is_file(TL_ROOT . '/' . $objFile->path))
                                    {
-                                          $row['avatar'] = \Image::get($objFile->path, 50, 50, 'center_center');
+                                          $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
                                    }
                             }
                             else
@@ -228,11 +228,11 @@ class MemberRating extends \Module
                                    $path = $this->imageDir . '/avatar_default.jpg';
                                    if (is_file(TL_ROOT . '/' . $path))
                                    {
-                                          $row['avatar'] = \Image::get($path, 50, 50, 'center_center');
+                                          $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
                                    }
                             }
                             $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
-                            $row['visibility_icon_src'] = sprintf($this->imageDir . '/%s', $visibility);
+                            $row['visibility_icon_src'] = TL_FILES_URL . sprintf($this->imageDir . '/%s', $visibility);
                      }
                      $arrAllRatings[] = $row;
               }
@@ -253,7 +253,7 @@ class MemberRating extends \Module
                             {
                                    if (is_file(TL_ROOT . '/' . $objFile->path))
                                    {
-                                          $row['avatar'] = \Image::get($objFile->path, 50, 50, 'center_center');
+                                          $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
                                    }
                             }
                             else
@@ -261,7 +261,7 @@ class MemberRating extends \Module
                                    $path = $this->imageDir . '/avatar_default.jpg';
                                    if (is_file(TL_ROOT . '/' . $path))
                                    {
-                                          $row['avatar'] = \Image::get($path, 50, 50, 'center_center');
+                                          $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
                                    }
                             }
                      }
@@ -269,43 +269,8 @@ class MemberRating extends \Module
               }
               $this->ratedUser->top3 = count($arrTop3) > 2 ? $arrTop3 : false;
 
-              // ***** MY RATINGS SECTION *****
-              if (FE_USER_LOGGED_IN)
-              {
-                     $strSql = "SELECT * FROM tl_comments WHERE source = ? AND owner = ? ORDER BY dateOfCreation DESC, score DESC";
-                     $objRatings = $this->Database->prepare($strSql)->execute('tl_member', $this->loggedInUser->id);
-                     $arrMyRatings = array();
-                     while ($row = $objRatings->fetchAssoc())
-                     {
-                            $objMember = \MemberModel::findByPk($row['owner']);
-                            if ($objMember !== null)
-                            {
-                                   $row['firstname'] = $objMember->firstname;
-                                   $row['lastname'] = $objMember->lastname;
-                                   $objFile = \FilesModel::findByUuid($objMember->avatar);
-                                   if ($objFile !== null)
-                                   {
-                                          if (is_file(TL_ROOT . '/' . $objFile->path))
-                                          {
-                                                 $row['avatar'] = \Image::get($objFile->path, 50, 50, 'center_center');
-                                          }
-                                   }
-                                   else
-                                   {
-                                          $path = $this->imageDir . '/avatar_default.jpg';
-                                          if (is_file(TL_ROOT . '/' . $path))
-                                          {
-                                                 $row['avatar'] = \Image::get($path, 50, 50, 'center_center');
-                                          }
-                                   }
-                                   $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
-                                   $row['visibility_icon_src'] = sprintf($this->imageDir . '/%s', $visibility);
-                            }
-                            $arrMyRatings[] = $row;
-                     }
-                     $this->loggedInUser->myRatings = count($arrMyRatings) ? $arrMyRatings : false;
-              }
 
+              // MSC
               $this->Template->loggedInUser = $this->loggedInUser;
               $this->Template->ratedUser = $this->ratedUser;
               $this->Template->imageDir = $this->imageDir;
@@ -639,6 +604,6 @@ class MemberRating extends \Module
 
        public function generateSocialmediaIcon($strHref)
        {
-              return '<img src="' . MemberRatingHelper::getSocialmediaIconSRC($strHref) . '" alt="socialmedia_icon" class="socialmediaIcon">';
+              return '<img src="' . TL_FILES_URL . MemberRatingHelper::getSocialmediaIconSRC($strHref) . '" alt="socialmedia_icon" class="socialmediaIcon">';
        }
 }
