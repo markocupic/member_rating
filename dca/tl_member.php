@@ -42,14 +42,24 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'] = array
        'sql'                     => "blob NULL"
 );
 
+
 $GLOBALS['TL_DCA']['tl_member']['fields']['avatar'] = array
 (
-       'label'                   => &$GLOBALS['TL_LANG']['tl_member']['avatar'],
-       'exclude'                 => true,
-       'search'                  => true,
-       'inputType'               => 'fileTree',
-       'eval'                    => array('filesOnly' => true, 'fieldType'=>'radio', 'tl_class'=>'clr'),
-       'sql'                     => "binary(16) NULL"
+       'label'     => &$GLOBALS['TL_LANG']['tl_member']['avatar'],
+       'exclude'   => true,
+       'inputType' => 'avatar',
+       'eval'      => array
+       (
+              'fieldType'      => 'radio',
+              'filesOnly'      => true,
+              'tl_class'       => 'clr',
+              'filename'       => 'member_%s',
+              'feViewable'     => true,
+              'feEditable'     => true,
+              'feGroup'        => 'personal',
+              'doNotOverwrite' => !$GLOBALS['TL_CONFIG']['avatar_rename']
+       ),
+       'sql'       => "binary(16) NULL"
 );
 /**
  * Class tl_member_member_rating

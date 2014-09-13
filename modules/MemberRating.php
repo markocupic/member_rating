@@ -161,8 +161,48 @@ class MemberRating extends \Module
                      $this->handleAjax();
                      exit();
               }
+              if (FE_USER_LOGGED_IN)
+              {
+                     // ***** PERSONAL SECTION *****
 
-              // ***** PERSONAL SECTION *****
+                     // get avatar of logged in user
+                     $objFile = \FilesModel::findByUuid($this->loggedInUser->avatar);
+                     if ($objFile !== null)
+                     {
+                            if (is_file(TL_ROOT . '/' . $objFile->path))
+                            {
+                                   $this->loggedInUser->large_avatar = TL_FILES_URL . \Image::get($objFile->path, 150, 150, 'center_center');
+                            }
+                     }
+                     else
+                     {
+                            $path = $this->loggedInUser->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
+                            if (is_file(TL_ROOT . '/' . $path))
+                            {
+                                   $this->loggedInUser->large_avatar = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
+                            }
+                     }
+
+                     // socialmedia Icons
+                     if (empty($this->loggedInUser->socialmediaLinks))
+                     {
+                            $this->loggedInUser->socialmediaLinks = null;
+                     }
+                     else
+                     {
+                            $this->loggedInUser->socialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
+                     }
+
+                     // get score and grade of logged user
+                     $this->loggedInUser->score = MemberRatingHelper::getScore($this->loggedInUser->id);
+                     $this->loggedInUser->gradeLabel = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
+                     $this->loggedInUser->gradeIcon = MemberRatingHelper::getGrade($this->loggedInUser->id, 'icon');
+
+              }
+
+
+
+              // ***** PERSONAL INFORMATION OF RATED USER *****
 
               // get avatar of logged in user
               $objFile = \FilesModel::findByUuid($this->ratedUser->avatar);
@@ -175,7 +215,7 @@ class MemberRating extends \Module
               }
               else
               {
-                     $path = $this->imageDir . '/avatar_default.jpg';
+                     $path = $this->ratedUser->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
                      if (is_file(TL_ROOT . '/' . $path))
                      {
                             $this->ratedUser->large_avatar = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
@@ -192,10 +232,15 @@ class MemberRating extends \Module
                      $this->ratedUser->socialmediaLinks = deserialize($this->ratedUser->socialmediaLinks);
               }
 
-              // get score and grade of rated user
+              // get score and grade of logged user
               $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
-              $this->ratedUser->gradeLabel = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
-              $this->ratedUser->gradeIcon = MemberRatingHelper::getGrade($this->loggedInUser->id, 'icon');
+              $this->ratedUser->gradeLabel = MemberRatingHelper::getGrade($this->ratedUser->id, 'label');
+              $this->ratedUser->gradeIcon = MemberRatingHelper::getGrade($this->ratedUser->id, 'icon');
+
+
+
+
+
 
               // ***** ALL RATINGS SECTION *****
               if ($this->ratedUser->id == $this->loggedInUser->id)
@@ -225,7 +270,7 @@ class MemberRating extends \Module
                             }
                             else
                             {
-                                   $path = $this->imageDir . '/avatar_default.jpg';
+                                   $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
                                    if (is_file(TL_ROOT . '/' . $path))
                                    {
                                           $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
@@ -258,7 +303,7 @@ class MemberRating extends \Module
                             }
                             else
                             {
-                                   $path = $this->imageDir . '/avatar_default.jpg';
+                                   $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
                                    if (is_file(TL_ROOT . '/' . $path))
                                    {
                                           $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
@@ -604,6 +649,7 @@ class MemberRating extends \Module
 
        public function generateSocialmediaIcon($strHref)
        {
+
               return '<img src="' . TL_FILES_URL . MemberRatingHelper::getSocialmediaIconSRC($strHref) . '" alt="socialmedia_icon" class="socialmediaIcon">';
        }
 }

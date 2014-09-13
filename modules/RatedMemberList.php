@@ -100,7 +100,7 @@ class RatedMemberList extends \Module
                      }
                      else
                      {
-                            $path = $this->imageDir . '/avatar_default.jpg';
+                            $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
                             if (is_file(TL_ROOT . '/' . $path))
                             {
                                    $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');

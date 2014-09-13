@@ -4,39 +4,78 @@
         <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
     <?php endif; ?>
 
-    <!-- avatar & user information of logged in user -->
-    <div id="avatar">
+    <?php if(FE_USER_LOGGED_IN): ?>
+        <!-- avatar & user information of logged in user -->
+        <h2>Ich</h2>
+        <div id="avatar">
+            <div class="image_container">
+                <img src="<?php echo $this->loggedInUser->large_avatar; ?>" alt="<?php echo $this->loggedInUser->firstname; ?> <?php echo $this->loggedInUser->lastname; ?>">
+                <?php if($this->loggedInUser->gradeIcon): ?>
+                    <img src="<?php echo $this->loggedInUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div id="gradeBox">
+            <!--<h3><?php echo $this->loggedInUser->firstname; ?> <?php echo $this->loggedInUser->lastname; ?></h3>-->
+            <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
+            <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+        </div>
+
+        <!-- socialmedia icons -->
+        <?php if($this->loggedInUser->socialmediaLinks): ?>
+            <div id="socialmediaLinks">
+            <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
+                <div class="image_container">
+                    <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
+                        <?php echo $this->module->generateSocialmediaIcon($href); ?>
+                    </a>
+                    <img src="<?php echo TL_FILES_URL . $this->imageDir; ?>/cancel-circle.png" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
+                </div>
+            <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        {{br}}
+        {{br}}
+        <hr>
+        {{br}}
+        {{br}}
+        {{br}}
+        {{br}}
+    <?php endif; ?>
+
+
+    <!-- avatar & user information of rated user -->
+<h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
+<div id="avatar">
         <div class="image_container">
             <img src="<?php echo $this->ratedUser->large_avatar; ?>" alt="<?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?>">
             <?php if($this->ratedUser->gradeIcon): ?>
-                <img src="<?php echo $this->ratedUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+            <img src="<?php echo $this->ratedUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
             <?php endif; ?>
         </div>
     </div>
 
     <div id="gradeBox">
-        <h3><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h3>
         <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
         <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
     </div>
 
     <!-- socialmedia icons -->
     <?php if($this->ratedUser->socialmediaLinks): ?>
-        <div id="socialmediaLinks">
+    <div id="socialmediaLinks">
         <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
-            <div class="image_container">
-                <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                    <?php echo $this->module->generateSocialmediaIcon($href); ?>
-                </a>
-                <?php if($this->ratedUser->id == $this->loggedInUser->id): ?>
-                    <img src="<?php echo TL_FILES_URL . $this->imageDir; ?>/cancel-circle.png" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
+        <div class="image_container">
+            <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
+                <?php echo $this->module->generateSocialmediaIcon($href); ?>
+            </a>
         </div>
+        <?php endforeach; ?>
+    </div>
     <?php endif; ?>
 
-    {{br}}
+
+
 
     <?php if($this->ratedUser->id == $this->loggedInUser->id): ?>
         <!-- socialmedia links form -->
