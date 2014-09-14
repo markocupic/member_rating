@@ -27,7 +27,6 @@ class MemberRatingHelper extends \System
               return $score;
        }
 
-
        /**
         * @param $strLink
         * @return string
@@ -72,6 +71,32 @@ class MemberRatingHelper extends \System
 
        }
 
+       /**
+        * @param $strHref
+        * @return string
+        */
+       public static function generateSocialmediaIcon($strHref)
+       {
+
+              $src = self::getSocialmediaIconSRC($strHref);
+              if ($src != '')
+              {
+                     $objFile = new \File($src, true);
+                     if ($objFile !== null)
+                     {
+                            if ($objFile->isGdImage)
+                            {
+
+                                   $src = TL_FILES_URL . $src;
+                                   $size = sprintf('width="%s" height="%s"', $objFile->width, $objFile->height);
+                                   $alt = 'socialmediaIcon';
+                                   $title = specialchars($strHref);
+                                   return sprintf('<img src="%s" %s alt="%s" title="%s" class="socialmediaIcon">', $src, $size, $alt, $title);
+
+                            }
+                     }
+              }
+       }
 
        /**
         * @param $score
@@ -113,10 +138,18 @@ class MemberRatingHelper extends \System
                             if ($score >= $arrGrade['score'])
                             {
                                    $arrReturn['label'] = $arrGrade['label'];
-                                   $icon = self::getImageDir() . '/' . $arrGrade['icon'];
-                                   if (is_file(TL_ROOT . '/' . $icon))
+                                   $src = self::getImageDir() . '/' . $arrGrade['icon'];
+                                   if (is_file(TL_ROOT . '/' . $src))
                                    {
-                                          $arrReturn['icon'] = TL_FILES_URL . $icon;
+                                          $objFile = new \File($src, true);
+                                          if ($objFile !== null)
+                                          {
+                                                 if ($objFile->isGdImage)
+                                                 {
+                                                        $size = sprintf('width="%s" height="%s"', $objFile->width, $objFile->height);
+                                                        $arrReturn['icon'] = sprintf('<img src="%s" %s alt="%s" title="%s" class="%s">', TL_FILES_URL . $src, $size, 'grade icon', specialchars($arrGrade['label']), 'gradeIcon');
+                                                 }
+                                          }
                                    }
                                    break;
                             }
@@ -126,14 +159,13 @@ class MemberRatingHelper extends \System
 
        }
 
-
        /**
         * @param $memberId
         * @param array $arrSize
         * @param $objModule
         * @return bool|string
         */
-       public static function getAvatar($memberId, array $arrSize, $objModule)
+       public static function getAvatar($memberId, array $arrSize, $alt = '', $title = '', $objModule)
        {
 
               $objMember = \MemberModel::findByPk($memberId);
@@ -142,13 +174,15 @@ class MemberRatingHelper extends \System
                      return false;
               }
 
+              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title),
+                     'size' => sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]));
 
               $objFile = \FilesModel::findByUuid($objMember->avatar);
               if ($objFile !== null)
               {
                      if (is_file(TL_ROOT . '/' . $objFile->path))
                      {
-                            $avatarSRC = TL_FILES_URL . \Image::get($objFile->path, $arrSize[0], $arrSize[1], $arrSize[2]);
+                            $avatar['src'] = TL_FILES_URL . \Image::get($objFile->path, $arrSize[0], $arrSize[1], $arrSize[2]);
                      }
               }
               else
@@ -156,13 +190,12 @@ class MemberRatingHelper extends \System
                      $path = $objMember->gender == 'female' ? $objModule->imageDir . '/female.png' : $objModule->imageDir . '/male.png';
                      if (is_file(TL_ROOT . '/' . $path))
                      {
-                            $avatarSRC = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
+                            $avatar['src'] = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
                      }
               }
 
-              return $avatarSRC;
+              return $avatar;
        }
-
 
        /**
         * @param $memberId
@@ -186,7 +219,6 @@ class MemberRatingHelper extends \System
                      return deserialize($objMember->socialmediaLinks);
               }
        }
-
 
        /**
         * @param null $id
@@ -215,7 +247,6 @@ class MemberRatingHelper extends \System
               }
               return $username;
        }
-
 
        /**
         * @return mixed|null

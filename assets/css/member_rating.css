@@ -8,7 +8,7 @@
     display: inline-block;
     position: relative;
 }
-.mod_member_rating .avatar .gradeLabel {
+.mod_member_rating .avatar .gradeIcon {
     position: absolute;
     top: -4px;
     right: -20px;
@@ -31,7 +31,7 @@
 }
 
 /* comments */
-.mod_member_rating .comment {
+.mod_member_rating .row {
     position: relative;
 }
 /* top3*/
@@ -46,7 +46,7 @@
 }
 
 /* top3 */
-.mod_member_rating #top3 .comment {
+.mod_member_rating #top3 .row {
     position: relative;
 }
 .mod_member_rating #top3 .col_0 {
@@ -62,7 +62,7 @@
 }
 
 /* all ratings */
-.mod_member_rating #allRatings .comment {
+.mod_member_rating #allRatings .row {
     position: relative;
 }
 .mod_member_rating #allRatings .col_0 {
@@ -92,27 +92,6 @@
     left: 50px;
 }
 .mod_member_rating #allRatings .myprofile .col_2 {
-    position: relative;
-    top: 0;
-    left: 140px;
-    min-height: 80px;
-}
-
-/* my ratings */
-.mod_member_rating #myRatings .comment {
-    position: relative;
-}
-.mod_member_rating #myRatings .col_0 {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-.mod_member_rating #myRatings .col_1 {
-    position: absolute;
-    top: 0;
-    left: 50px;
-}
-.mod_member_rating #myRatings .col_2 {
     position: relative;
     top: 0;
     left: 140px;

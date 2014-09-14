@@ -5,20 +5,19 @@
     <?php endif; ?>
 
     <?php if(FE_USER_LOGGED_IN): ?>
-        <div id="loggedInUserSection">
-        <!-- avatar & user information of logged in user -->
+    <!-- avatar & user profile of logged in member -->
+    <div id="loggedInUserProfile">
             <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
             <div class="avatar">
                 <div class="image_container">
-                    <img src="<?php echo $this->loggedInUser->large_avatar; ?>" alt="<?php echo $this->loggedInUser->firstname; ?> <?php echo $this->loggedInUser->lastname; ?>">
+                    <img src="<?php echo $this->loggedInUser->avatar['src']; ?>" <?php echo $this->loggedInUser->avatar['size']; ?> alt="<?php echo $this->loggedInUser->avatar['alt']; ?>" title="<?php echo $this->loggedInUser->avatar['title']; ?>">
                     <?php if($this->loggedInUser->gradeIcon): ?>
-                        <img src="<?php echo $this->loggedInUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+                        <?php echo $this->loggedInUser->gradeIcon; ?>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div id="gradeBox">
-                <!--<h3><?php echo $this->loggedInUser->firstname; ?> <?php echo $this->loggedInUser->lastname; ?></h3>-->
                 <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
                 <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
             </div>
@@ -36,10 +35,6 @@
             <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-        {{br}}
-        {{br}}
-
         <!-- socialmedia links form -->
         <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->socialMediaFormId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
 
@@ -56,22 +51,17 @@
             </div>
         </div>
         </form>
-        {{br}}
-        {{br}}
-        <hr>
-        {{br}}
-        {{br}}
     <?php endif; ?>
 
 
-    <!-- avatar & user information of rated user -->
-    <div id="ratedUserSection">
+    <!-- avatar & profile of selected user -->
+    <div id="ratedUserProfile">
         <h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
         <div class="avatar">
             <div class="image_container">
-                <img src="<?php echo $this->ratedUser->large_avatar; ?>" alt="<?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?>">
+                <img src="<?php echo $this->ratedUser->avatar['src']; ?>" <?php echo $this->ratedUser->avatar['size']; ?> alt="<?php echo $this->ratedUser->avatar['alt']; ?>" title="<?php echo $this->ratedUser->avatar['title']; ?>">
                 <?php if($this->ratedUser->gradeIcon): ?>
-                <img src="<?php echo $this->ratedUser->gradeIcon; ?>" alt="grade icon" class="gradeLabel">
+                <?php echo $this->ratedUser->gradeIcon; ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -80,8 +70,6 @@
             <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
             <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
         </div>
-
-
         <!-- socialmedia icons -->
         <?php if($this->ratedUser->socialmediaLinks): ?>
         <div id="socialmediaLinks">
@@ -97,22 +85,15 @@
     </div>
 
 
-
-
-
-
-    {{br}}
-    {{br}}
-
     <!-- top3 list -->
     <?php if($this->ratedUser->top3): ?>
-        <h2> Top 3</h2>
+        <h2>Top 3</h2>
         <div id="top3">
             <?php foreach($this->ratedUser->top3 as $comment): ?>
-                <div class="comment">
+                <div class="row">
                     <div class="col_0">
                         <div class="image_container">
-                            <img src="<?php echo $comment['avatar']; ?>" alt="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo $comment['firstname']; ?> <?php echo $comment['lastname']; ?>">
+                            <img src="<?php echo $comment['avatar']['src']; ?>" <?php echo $comment['avatar']['size']; ?> alt="<?php echo $comment['avatar']['alt']; ?>" title="<?php echo $comment['avatar']['title']; ?>">
                         </div>
                     </div>
                     <div class="col_1">
@@ -137,21 +118,21 @@
         <?php if($this->ratedUser->allRatings): ?>
                 <div class="notempty<?php echo ($this->ratedUser->id != $this->loggedInUser->id) ?: ' myprofile'; ?>">
                     <?php foreach($this->ratedUser->allRatings as $comment): ?>
-                        <div class="comment">
+                        <div class="row">
                             <div class="col_0">
                                 <div class="image_container">
-                                    <img src="<?php echo $comment['visibility_icon_src']; ?>" alt="visibility status" title="aktivieren/deaktivieren" onclick="toggleVisibility(this,<?php echo $comment['id']; ?>)">
+                                    <img src="<?php echo $comment['visibility_icon_src']; ?>" alt="visibility status" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish']; ?>" onclick="toggleVisibility(this,<?php echo $comment['id']; ?>)">
                                 </div>
                             </div>
                             <div class="col_1">
                                 <div class="image_container">
-                                    <img src="<?php echo $comment['avatar']; ?>" alt="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo $comment['firstname']; ?> <?php echo $comment['lastname']; ?>">
+                                    <img src="<?php echo $comment['avatar']['src']; ?>" <?php echo $comment['avatar']['size']; ?> alt="<?php echo $comment['avatar']['alt']; ?>" title="<?php echo $comment['avatar']['title']; ?>">
                                 </div>
                             </div>
                             <div class="col_2">
                                 <div class="time"><?php echo $comment['time']; ?></div>
                                 <div class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?>: <?php echo $comment['score']; ?></div>
-                                <div class="author">Kommentar von: <?php echo \MemberRating\MemberRatingHelper::findMemberByPk($comment['owner'], 'fullname'); ?></div>
+                                <div class="author"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo \MemberRating\MemberRatingHelper::findMemberByPk($comment['owner'], 'fullname'); ?></div>
                                 <div class="text">
                                     <?php echo $comment['comment']; ?>
                                 </div>
@@ -202,9 +183,10 @@
                 </div>
          <?php endif; ?>
     <?php endif; ?>
-        <script>
-            <?php echo $this->JsLanguageObject; ?>
-            <?php echo $this->JsVarsObject; ?>
-        </script>
+
+    <script>
+        <?php echo $this->JsLanguageObject; ?>
+        <?php echo $this->JsVarsObject; ?>
+    </script>
 
 </div>

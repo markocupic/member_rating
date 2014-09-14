@@ -90,22 +90,10 @@ class RatedMemberList extends \Module
 
 
                      $row['hrefDetailPage'] = $href ? sprintf($href, $row['id']) : false;
-                     $objFile = \FilesModel::findByUuid($objMember->avatar);
-                     if ($objFile !== null)
-                     {
-                            if (is_file(TL_ROOT . '/' . $objFile->path))
-                            {
-                                   $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
-                            }
-                     }
-                     else
-                     {
-                            $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
-                            if (is_file(TL_ROOT . '/' . $path))
-                            {
-                                   $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
-                            }
-                     }
+                     // get avatar of member
+                     $arrSize = array(50, 50, 'center_center');
+                     $title = $row['firstname'] . ' ' . $row['lastname'] ;
+                     $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
                      $arrRows[] = $row;
               }
 

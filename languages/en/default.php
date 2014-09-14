@@ -22,15 +22,19 @@ $GLOBALS['TL_LANG']['MOD']['member_rating']['your_rating'] = 'Deine Wertung';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked'] = array('Formular gesperrt', 'Sie haben erst vor kurzem bei diesem Mitglied eine Bewertung abgegeben.');
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked_time'] = 'Eine weitere Bewertung ist erst wieder in %s möglich.';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['me'] = 'Ich';
+$GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish'] = 'aktivieren/deaktivieren';
+
 
 // buttons
 $GLOBALS['TL_LANG']['MOD']['member_rating']['add'] = 'Hinzufügen';
+
 
 // errors
 $GLOBALS['TL_LANG']['MOD']['member_rating']['err_add_score_between'] = 'Bitte vergeben Sie über das starvoting eine Punktezahl zwischen';
 
 
 // email
+$GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['subject'] = 'Neuer Kommentar von %s auf %s';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_1'] = 'Hallo %s';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_2'] = '%s gibt dir %s %s';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_3'] = 'Klicke auf diesen Link, um den Kommentar zu ver&ouml;ffentlichen:{{br}}<a href="%s">%s</a>';

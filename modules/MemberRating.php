@@ -29,7 +29,6 @@ class MemberRating extends \Module
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
-
        /**
         * @param $objModule
         * @param string $strColumn
@@ -41,7 +40,6 @@ class MemberRating extends \Module
 
               return parent::__construct($objModule, $strColumn);
        }
-
 
        /**
         * @return string
@@ -143,7 +141,6 @@ class MemberRating extends \Module
 
        }
 
-
        /**
         * Generate the module
         */
@@ -162,15 +159,15 @@ class MemberRating extends \Module
                      exit();
               }
 
-
               if (FE_USER_LOGGED_IN)
               {
-                     // ***** PERSONAL SECTION *****
+                     // ***** LOGGED USER PROFILE *****
                      // get avatar of logged in user
                      $arrSize = array(150, 150, 'center_center');
-                     $this->loggedInUser->large_avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, $this);
+                     $title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
+                     $this->loggedInUser->avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, $this);
 
-                     // socialmedia Icons
+                     // socialmedia links
                      MemberRatingHelper::getSocialmediaLinks($this->loggedInUser->id);
 
                      // get score and grade of logged user
@@ -180,13 +177,15 @@ class MemberRating extends \Module
 
               }
 
-
-              // ***** PERSONAL INFORMATION OF RATED USER *****
+              // ***** RATED USER PROFILE *****
               // get avatar of logged in user
               $arrSize = array(150, 150, 'center_center');
-              $this->ratedUser->large_avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, $this);
-              // get socialmedia links
+              $title = $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname;
+              $this->ratedUser->avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, 'avatar', $title, $this); // get socialmedia links
+
+              // socialmedia links
               $this->ratedUser->socialmediaLinks = MemberRatingHelper::getSocialmediaLinks($this->ratedUser->id);
+
               // get score and grade of logged user
               $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
               $this->ratedUser->gradeLabel = MemberRatingHelper::getGrade($this->ratedUser->id, 'label');
@@ -206,7 +205,8 @@ class MemberRating extends \Module
                             $row['lastname'] = $objMember->lastname;
                             // avatar
                             $arrSize = array(50, 50, 'center_center');
-                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, $this);
+                            $title = $objMember->firstname . ' ' . $objMember->lastname;
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
                      }
                      $arrTop3[] = $row;
               }
@@ -234,7 +234,8 @@ class MemberRating extends \Module
                             $row['lastname'] = $objMember->lastname;
                             // avatar
                             $arrSize = array(50, 50, 'center_center');
-                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, $this);
+                            $title = $objMember->firstname . ' ' . $objMember->lastname;
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
                             // toggle visibility icon
                             $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
                             $row['visibility_icon_src'] = TL_FILES_URL . sprintf($this->imageDir . '/%s', $visibility);
@@ -285,7 +286,6 @@ class MemberRating extends \Module
               }
        }
 
-
        /**
         * generate voting-form
         */
@@ -296,7 +296,6 @@ class MemberRating extends \Module
               {
                      return;
               }
-
 
               $strFields = '';
               $scoreError = false;
@@ -401,7 +400,6 @@ class MemberRating extends \Module
               $this->Template->arrFields = $arrFields;
        }
 
-
        /**
         * handle ajax requests
         */
@@ -445,7 +443,6 @@ class MemberRating extends \Module
               }
               exit;
        }
-
 
        /**
         * generate socialmedia-links textfield
@@ -508,7 +505,6 @@ class MemberRating extends \Module
               }
        }
 
-
        /**
         * @param $objComment
         */
@@ -544,17 +540,14 @@ class MemberRating extends \Module
 
               // Mail
               $objEmail = new \Email();
-              $objEmail->subject = 'Neuer Kommentar von ' . $objTemplate->author . ' auf ' . $_SERVER['SERVER_NAME'];
-
+              $objEmail->subject = sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['subject'], $objTemplate->author, $_SERVER['SERVER_NAME']);
               $strContent = $this->replaceInsertTags($strContent);
               $objEmail->html = $strContent;
 
               // text version
               $strContent = \String::decodeEntities($strContent);
               $strContent = strip_tags($strContent);
-              $strContent = str_replace(array(
-
-                                               '[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
+              $strContent = str_replace(array('[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
               $objEmail->text = $strContent;
 
               $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
@@ -562,10 +555,14 @@ class MemberRating extends \Module
               $objEmail->sendTo($objRatedMember->email);
        }
 
-
+       /**
+        * @param $strHref
+        * @return string
+        */
        public function generateSocialmediaIcon($strHref)
        {
 
-              return '<img src="' . TL_FILES_URL . MemberRatingHelper::getSocialmediaIconSRC($strHref) . '" alt="socialmedia_icon" class="socialmediaIcon">';
+              return MemberRatingHelper::generateSocialmediaIcon($strHref);
        }
+
 }
