@@ -100,11 +100,8 @@ class MemberRatingHelper extends \System
                             {
                                    continue;
                             }
-                            $arrayGrades[$arrLine[0]] = array(
-                                   'score' => $arrLine[0],
-                                   'label' => $arrLine[1],
-                                   'icon' => $arrLine[2]
-                            );
+                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1],
+                                   'icon' => $arrLine[2]);
                      }
               }
               krsort($arrayGrades);
@@ -127,6 +124,67 @@ class MemberRatingHelper extends \System
               }
               return $arrReturn[$key] ? $arrReturn[$key] : false;
 
+       }
+
+
+       /**
+        * @param $memberId
+        * @param array $arrSize
+        * @param $objModule
+        * @return bool|string
+        */
+       public static function getAvatar($memberId, array $arrSize, $objModule)
+       {
+
+              $objMember = \MemberModel::findByPk($memberId);
+              if ($objMember === null)
+              {
+                     return false;
+              }
+
+
+              $objFile = \FilesModel::findByUuid($objMember->avatar);
+              if ($objFile !== null)
+              {
+                     if (is_file(TL_ROOT . '/' . $objFile->path))
+                     {
+                            $avatarSRC = TL_FILES_URL . \Image::get($objFile->path, $arrSize[0], $arrSize[1], $arrSize[2]);
+                     }
+              }
+              else
+              {
+                     $path = $objMember->gender == 'female' ? $objModule->imageDir . '/female.png' : $objModule->imageDir . '/male.png';
+                     if (is_file(TL_ROOT . '/' . $path))
+                     {
+                            $avatarSRC = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
+                     }
+              }
+
+              return $avatarSRC;
+       }
+
+
+       /**
+        * @param $memberId
+        * @return bool|mixed
+        */
+       public static function getSocialmediaLinks($memberId)
+       {
+
+              $objMember = \MemberModel::findByPk($memberId);
+              if ($objMember === null)
+              {
+                     return false;
+              }
+
+              if (empty($objMember->socialmediaLinks))
+              {
+                     return false;
+              }
+              else
+              {
+                     return deserialize($objMember->socialmediaLinks);
+              }
        }
 
 

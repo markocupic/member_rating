@@ -1,14 +1,14 @@
 /* my avatar */
-.mod_member_rating #avatar .image_container img {
+.mod_member_rating .avatar .image_container img {
     display: inline;
 }
-.mod_member_rating #avatar .image_container {
+.mod_member_rating .avatar .image_container {
     border: 1px solid gray;
     width: auto;
     display: inline-block;
     position: relative;
 }
-.mod_member_rating #avatar .gradeLabel {
+.mod_member_rating .avatar .gradeLabel {
     position: absolute;
     top: -4px;
     right: -20px;

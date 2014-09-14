@@ -5,19 +5,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
     <body>
-    <div>
-        <p>Hallo <?php echo $this->name; ?></p>
-        <p><?php echo $this->author; ?> gibt dir <?php echo $this->score; ?> Punkt(e) und hat dabei folgenden Kommentar verfasst:</p>
-        <p><?php echo nl2br($this->comment); ?></p>
-        {{br}}
-        <p>Klicke auf diesen Link, um den Kommentar zu ver&ouml;ffentlichen:{{br}}<a href="<?php echo $this->link; ?>"><?php echo $this->link; ?></a></p>
-        {{br}}
-        {{br}}
-        <p>Klicke auf diesen Link, um den Kommentar unwiderruflich zu l&ouml;schen:{{br}}<a href="<?php echo $this->link_del; ?>"><?php echo $this->link_del; ?></a></p>
-        {{br}}
-        {{br}}
-        {{br}}
-        <p>{{br}}Dies ist eine automatisch generierte Nachricht und kann nicht beantwortet werden. Bei Fragen wenden Sie sich an den Administrator oder Betreiber der Seite.</p>
-    </div>
+        <div>
+            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_1'], $this->name); ?></p>
+            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_2'], $this->author, $this->score, $GLOBALS['TL_LANG']['MOD']['member_rating']['score']); ?></p>
+            {{br}}
+            {{br}}
+            <p>
+                <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['reason_why']; ?>:{{br}}
+                <?php echo $this->comment; ?>
+            </p>
+            {{br}}
+            {{br}}
+            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_3'], $this->link, $this->link); ?></p>
+            {{br}}
+            {{br}}
+            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_4'], $this->link_del, $this->link_del); ?></p>
+            {{br}}
+            {{br}}
+            <p><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_5']; ?></p>
+        </div>
     </body>
 </html>

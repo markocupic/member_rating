@@ -161,37 +161,17 @@ class MemberRating extends \Module
                      $this->handleAjax();
                      exit();
               }
+
+
               if (FE_USER_LOGGED_IN)
               {
                      // ***** PERSONAL SECTION *****
-
                      // get avatar of logged in user
-                     $objFile = \FilesModel::findByUuid($this->loggedInUser->avatar);
-                     if ($objFile !== null)
-                     {
-                            if (is_file(TL_ROOT . '/' . $objFile->path))
-                            {
-                                   $this->loggedInUser->large_avatar = TL_FILES_URL . \Image::get($objFile->path, 150, 150, 'center_center');
-                            }
-                     }
-                     else
-                     {
-                            $path = $this->loggedInUser->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
-                            if (is_file(TL_ROOT . '/' . $path))
-                            {
-                                   $this->loggedInUser->large_avatar = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
-                            }
-                     }
+                     $arrSize = array(150, 150, 'center_center');
+                     $this->loggedInUser->large_avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, $this);
 
                      // socialmedia Icons
-                     if (empty($this->loggedInUser->socialmediaLinks))
-                     {
-                            $this->loggedInUser->socialmediaLinks = null;
-                     }
-                     else
-                     {
-                            $this->loggedInUser->socialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
-                     }
+                     MemberRatingHelper::getSocialmediaLinks($this->loggedInUser->id);
 
                      // get score and grade of logged user
                      $this->loggedInUser->score = MemberRatingHelper::getScore($this->loggedInUser->id);
@@ -201,45 +181,36 @@ class MemberRating extends \Module
               }
 
 
-
               // ***** PERSONAL INFORMATION OF RATED USER *****
-
               // get avatar of logged in user
-              $objFile = \FilesModel::findByUuid($this->ratedUser->avatar);
-              if ($objFile !== null)
-              {
-                     if (is_file(TL_ROOT . '/' . $objFile->path))
-                     {
-                            $this->ratedUser->large_avatar = TL_FILES_URL . \Image::get($objFile->path, 150, 150, 'center_center');
-                     }
-              }
-              else
-              {
-                     $path = $this->ratedUser->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
-                     if (is_file(TL_ROOT . '/' . $path))
-                     {
-                            $this->ratedUser->large_avatar = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
-                     }
-              }
-
-              // socialmedia Icons
-              if (empty($this->ratedUser->socialmediaLinks))
-              {
-                     $this->ratedUser->socialmediaLinks = null;
-              }
-              else
-              {
-                     $this->ratedUser->socialmediaLinks = deserialize($this->ratedUser->socialmediaLinks);
-              }
-
+              $arrSize = array(150, 150, 'center_center');
+              $this->ratedUser->large_avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, $this);
+              // get socialmedia links
+              $this->ratedUser->socialmediaLinks = MemberRatingHelper::getSocialmediaLinks($this->ratedUser->id);
               // get score and grade of logged user
               $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
               $this->ratedUser->gradeLabel = MemberRatingHelper::getGrade($this->ratedUser->id, 'label');
               $this->ratedUser->gradeIcon = MemberRatingHelper::getGrade($this->ratedUser->id, 'icon');
 
 
-
-
+              // ***** TOP 3 SECTION *****
+              $objRatings = $this->Database->prepare("SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = ? ORDER BY score DESC, dateOfCreation DESC")->limit(3)->execute('tl_member', $this->ratedUser->id, 1);
+              $arrTop3 = array();
+              while ($row = $objRatings->fetchAssoc())
+              {
+                     $objMember = \MemberModel::findByPk($row['owner']);
+                     $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
+                     if ($objMember !== null)
+                     {
+                            $row['firstname'] = $objMember->firstname;
+                            $row['lastname'] = $objMember->lastname;
+                            // avatar
+                            $arrSize = array(50, 50, 'center_center');
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, $this);
+                     }
+                     $arrTop3[] = $row;
+              }
+              $this->ratedUser->top3 = count($arrTop3) > 2 ? $arrTop3 : false;
 
 
               // ***** ALL RATINGS SECTION *****
@@ -256,63 +227,21 @@ class MemberRating extends \Module
               while ($row = $objRatings->fetchAssoc())
               {
                      $objMember = \MemberModel::findByPk($row['owner']);
+                     $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
                      if ($objMember !== null)
                      {
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
-                            $objFile = \FilesModel::findByUuid($objMember->avatar);
-                            if ($objFile !== null)
-                            {
-                                   if (is_file(TL_ROOT . '/' . $objFile->path))
-                                   {
-                                          $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
-                                   }
-                            }
-                            else
-                            {
-                                   $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
-                                   if (is_file(TL_ROOT . '/' . $path))
-                                   {
-                                          $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
-                                   }
-                            }
+                            // avatar
+                            $arrSize = array(50, 50, 'center_center');
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, $this);
+                            // toggle visibility icon
                             $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
                             $row['visibility_icon_src'] = TL_FILES_URL . sprintf($this->imageDir . '/%s', $visibility);
                      }
                      $arrAllRatings[] = $row;
               }
               $this->ratedUser->allRatings = count($arrAllRatings) ? $arrAllRatings : false;
-
-              // ***** TOP 3 SECTION *****
-              $objRatings = $this->Database->prepare("SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = ? ORDER BY score DESC, dateOfCreation DESC")->limit(3)->execute('tl_member', $this->ratedUser->id, 1);
-              $arrTop3 = array();
-              while ($row = $objRatings->fetchAssoc())
-              {
-                     $objMember = \MemberModel::findByPk($row['owner']);
-                     if ($objMember !== null)
-                     {
-                            $row['firstname'] = $objMember->firstname;
-                            $row['lastname'] = $objMember->lastname;
-                            $objFile = \FilesModel::findByUuid($objMember->avatar);
-                            if ($objFile !== null)
-                            {
-                                   if (is_file(TL_ROOT . '/' . $objFile->path))
-                                   {
-                                          $row['avatar'] = TL_FILES_URL . \Image::get($objFile->path, 50, 50, 'center_center');
-                                   }
-                            }
-                            else
-                            {
-                                   $path = $objMember->gender == 'female' ? $this->imageDir . '/female.png' : $this->imageDir . '/male.png';
-                                   if (is_file(TL_ROOT . '/' . $path))
-                                   {
-                                          $row['avatar'] = TL_FILES_URL . \Image::get($path, 50, 50, 'center_center');
-                                   }
-                            }
-                     }
-                     $arrTop3[] = $row;
-              }
-              $this->ratedUser->top3 = count($arrTop3) > 2 ? $arrTop3 : false;
 
 
               // MSC
@@ -344,13 +273,11 @@ class MemberRating extends \Module
               $this->Template->JsLanguageObject = str_replace(',}', '}', $strLang) . "\r\n";
               $this->Template->JsVarsObject = "ModuleVars = {REQUEST_TOKEN: '" . REQUEST_TOKEN . "'};" . "\r\n";
 
-
+              // generate forms
               if (FE_USER_LOGGED_IN)
               {
-                     if ($this->loggedInUser->id == $this->ratedUser->id)
-                     {
-                            $this->generateSocialMediaLinksForm();
-                     }
+                     $this->generateSocialMediaLinksForm();
+
                      if ($this->loggedInUser->id != $this->ratedUser->id)
                      {
                             $this->generateVotingForm();
@@ -381,11 +308,7 @@ class MemberRating extends \Module
               $objComment = new \CommentsModel();
 
               // Build the form
-              $arrFF = array(
-                     'comment',
-                     'score',
-                     'captcha'
-              );
+              $arrFF = array('comment', 'score', 'captcha');
               foreach ($arrFF as $field)
               {
                      $arrData = & $GLOBALS['TL_DCA']['tl_comments']['fields'][$field];
@@ -631,14 +554,7 @@ class MemberRating extends \Module
               $strContent = strip_tags($strContent);
               $strContent = str_replace(array(
 
-                                               '[&]',
-                                               '[lt]',
-                                               '[gt]'
-                                        ), array(
-                                               '&',
-                                               '<',
-                                               '>'
-                                        ), $strContent);
+                                               '[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
               $objEmail->text = $strContent;
 
               $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
