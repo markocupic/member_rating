@@ -98,6 +98,7 @@ class MemberRatingHelper extends \System
               }
        }
 
+
        /**
         * @param $score
         * @return array
@@ -173,9 +174,8 @@ class MemberRatingHelper extends \System
               {
                      return false;
               }
-
-              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title),
-                     'size' => sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]));
+              $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
+              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size);
 
               $objFile = \FilesModel::findByUuid($objMember->avatar);
               if ($objFile !== null)
