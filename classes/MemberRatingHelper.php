@@ -19,7 +19,6 @@ class MemberRatingHelper extends \System
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
-
        /**
         * get score of a member
         * @param $id
@@ -32,7 +31,6 @@ class MemberRatingHelper extends \System
               $score = $objPoints->sumscore <= 0 ? '0' : $objPoints->sumscore;
               return $score;
        }
-
 
        /**
         * @param $strLink
@@ -78,7 +76,6 @@ class MemberRatingHelper extends \System
 
        }
 
-
        /**
         * @param $strHref
         * @return string
@@ -105,7 +102,6 @@ class MemberRatingHelper extends \System
                      }
               }
        }
-
 
        /**
         * @param $score
@@ -134,11 +130,8 @@ class MemberRatingHelper extends \System
                             {
                                    continue;
                             }
-                            $arrayGrades[$arrLine[0]] = array(
-                                   'score' => $arrLine[0],
-                                   'label' => $arrLine[1],
-                                   'icon' => $arrLine[2]
-                            );
+                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1],
+                                   'icon' => $arrLine[2]);
                      }
               }
               krsort($arrayGrades);
@@ -150,7 +143,7 @@ class MemberRatingHelper extends \System
                             if ($score >= $arrGrade['score'])
                             {
                                    $arrReturn['label'] = $arrGrade['label'];
-                                   $src = self::getImageDir() . '/' . $arrGrade['icon'];
+                                   $src = self::getImageDir() . '/levelicons/' . $arrGrade['icon'];
                                    if (is_file(TL_ROOT . '/' . $src))
                                    {
                                           $objFile = new \File($src, true);
@@ -171,10 +164,12 @@ class MemberRatingHelper extends \System
 
        }
 
-
        /**
         * @param $memberId
         * @param array $arrSize
+        * @param string $alt
+        * @param string $title
+        * @param string $class
         * @param $objModule
         * @return bool|string
         */
@@ -187,36 +182,40 @@ class MemberRatingHelper extends \System
                      return false;
               }
               $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
-              $avatar = array(
-                     'alt' => specialchars($alt),
-                     'title' => specialchars($title),
-                     'size' => $size,
-                     'class' => strlen($class) ? ' class="' . $class . '"' : '',
-              );
+              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size, 'class' => strlen($class) ? ' class="' . $class . '"' : '',);
 
+              $src = false;
               $objFile = \FilesModel::findByUuid($objMember->avatar);
               if ($objFile !== null)
               {
                      if (is_file(TL_ROOT . '/' . $objFile->path))
                      {
-                            $avatar['src'] = TL_FILES_URL . \Image::get($objFile->path, $arrSize[0], $arrSize[1], $arrSize[2]);
+                            $src = $objFile->path;
                      }
               }
               else
               {
-                     $path = $objMember->gender == 'female' ? $objModule->imageDir . '/female.png' : $objModule->imageDir . '/male.png';
+                     $path = $objMember->gender == 'female' ? $objModule->imageDir . '/avatars/female.png' : $objModule->imageDir . '/avatars/male.png';
                      if (is_file(TL_ROOT . '/' . $path))
                      {
-                            $avatar['src'] = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
+                            $src = $path;
                      }
               }
-              if ($avatar['src'])
+
+              // return default avatar
+              if (!$src)
+              {
+                     $src = $objMember->gender == 'female' ? 'system/modules/member_rating/assets/images/avatars/female.png' : 'system/modules/member_rating/assets/images/avatars/male.png';
+              }
+
+              // return image markup
+              $avatar['src'] = TL_FILES_URL . \Image::get($src, $arrSize[0], $arrSize[1], $arrSize[2]);
+              if (strlen($avatar['src']))
               {
                      return sprintf('<img src="%s" %s alt="%s" title="%s"%s>', $avatar['src'], $avatar['size'], $avatar['alt'], $avatar['title'], $avatar['class']);
               }
-
+              return false;
        }
-
 
        /**
         * @param $memberId
@@ -240,7 +239,6 @@ class MemberRatingHelper extends \System
                      return deserialize($objMember->socialmediaLinks);
               }
        }
-
 
        /**
         * @param null $id
@@ -270,7 +268,6 @@ class MemberRatingHelper extends \System
               return $username;
        }
 
-
        /**
         * @return string
         */
@@ -279,7 +276,6 @@ class MemberRatingHelper extends \System
 
               return MEMBER_RATING_IMAGE_DIR;
        }
-
 
        /**
         * @param $strPath

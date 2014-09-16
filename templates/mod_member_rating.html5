@@ -121,7 +121,7 @@
                         <div class="row">
                             <div class="col_0">
                                 <div class="image_container">
-                                    <img src="<?php echo $comment['visibility_icon_src']; ?>" alt="visibility status" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish']; ?>" onclick="toggleVisibility(this,<?php echo $comment['id']; ?>)">
+                                    <img src="<?php echo $comment['visibility_icon_src']; ?>" alt="visibility-status" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish']; ?>" onclick="toggleVisibility(this,<?php echo $comment['id']; ?>)">
                                 </div>
                             </div>
                             <div class="col_1">
@@ -170,7 +170,7 @@
                                 <!-- starbox -->
                                 <div id="starbox">
                                 <?php for($i=1;$i<6;$i++): ?>
-                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->imageDir; ?>/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
+                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->imageDir; ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
                                 <?php endfor; ?>
                                 </div>
                                 <?php echo $this->fields; ?>
