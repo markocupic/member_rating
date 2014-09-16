@@ -20,15 +20,20 @@ class MemberRating extends \Module
         */
        protected $strTemplate = 'mod_member_rating';
 
-       protected $ratedUser;
-
-       protected $loggedInUser;
-
        /**
         * @var string
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
+       /**
+        * @var
+        */
+       protected $ratedUser;
+
+       /**
+        * @var
+        */
+       protected $loggedInUser;
 
        /**
         * @param $objModule
@@ -41,7 +46,6 @@ class MemberRating extends \Module
 
               return parent::__construct($objModule, $strColumn);
        }
-
 
        /**
         * @return string
@@ -141,7 +145,6 @@ class MemberRating extends \Module
 
        }
 
-
        /**
         * Generate the module
         */
@@ -164,11 +167,7 @@ class MemberRating extends \Module
               {
                      // ***** LOGGED USER PROFILE *****
                      // get avatar of logged in user
-                     $arrSize = array(
-                            150,
-                            150,
-                            'center_center'
-                     );
+                     $arrSize = array(150, 150, 'center_center');
                      $title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
                      $this->loggedInUser->avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this);
 
@@ -184,11 +183,7 @@ class MemberRating extends \Module
 
               // ***** RATED USER PROFILE *****
               // get avatar of logged in user
-              $arrSize = array(
-                     150,
-                     150,
-                     'center_center'
-              );
+              $arrSize = array(150, 150, 'center_center');
               $title = $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname;
               $this->ratedUser->avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this); // get socialmedia links
 
@@ -213,11 +208,7 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(
-                                   50,
-                                   50,
-                                   'center_center'
-                            );
+                            $arrSize = array(50, 50, 'center_center');
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
                             $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                      }
@@ -246,16 +237,12 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(
-                                   50,
-                                   50,
-                                   'center_center'
-                            );
+                            $arrSize = array(50, 50, 'center_center');
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
                             $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                             // toggle visibility icon
                             $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
-                            $row['visibility_icon_src'] = TL_FILES_URL . sprintf($this->imageDir . '/%s', $visibility);
+                            $row['visibility_icon_src'] = TL_FILES_URL . sprintf(MemberRatingHelper::getImageDir() . '/%s', $visibility);
                      }
                      $arrAllRatings[] = $row;
               }
@@ -265,7 +252,7 @@ class MemberRating extends \Module
               // MSC
               $this->Template->loggedInUser = $this->loggedInUser;
               $this->Template->ratedUser = $this->ratedUser;
-              $this->Template->imageDir = $this->imageDir;
+              $this->Template->imageDir = MemberRatingHelper::getImageDir();
               $this->Template->module = $this;
 
               // add javascript language-file-object to template
@@ -303,7 +290,6 @@ class MemberRating extends \Module
               }
        }
 
-
        /**
         * generate voting-form
         */
@@ -325,11 +311,7 @@ class MemberRating extends \Module
               $objComment = new \CommentsModel();
 
               // Build the form
-              $arrFF = array(
-                     'comment',
-                     'score',
-                     'captcha'
-              );
+              $arrFF = array('comment', 'score', 'captcha');
               foreach ($arrFF as $field)
               {
                      $arrData = &$GLOBALS['TL_DCA']['tl_comments']['fields'][$field];
@@ -384,6 +366,7 @@ class MemberRating extends \Module
                      }
 
                      $temp = $objWidget->parse();
+                     // add a hidden field for the starrating
                      if ($field == 'score')
                      {
                             $temp = '<input type="hidden" name="score" id="ctrl_score" value="">';
@@ -421,7 +404,6 @@ class MemberRating extends \Module
               $this->Template->fields = $strFields;
               $this->Template->arrFields = $arrFields;
        }
-
 
        /**
         * handle ajax requests
@@ -466,7 +448,6 @@ class MemberRating extends \Module
               }
               exit;
        }
-
 
        /**
         * generate socialmedia-links textfield
@@ -529,7 +510,6 @@ class MemberRating extends \Module
               }
        }
 
-
        /**
         * @param $objComment
         */
@@ -572,15 +552,7 @@ class MemberRating extends \Module
               // text version
               $strContent = \String::decodeEntities($strContent);
               $strContent = strip_tags($strContent);
-              $strContent = str_replace(array(
-                                               '[&]',
-                                               '[lt]',
-                                               '[gt]'
-                                        ), array(
-                                               '&',
-                                               '<',
-                                               '>'
-                                        ), $strContent);
+              $strContent = str_replace(array('[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
               $objEmail->text = $strContent;
 
               $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
@@ -588,15 +560,14 @@ class MemberRating extends \Module
               $objEmail->sendTo($objRatedMember->email);
        }
 
-
        /**
         * @param $strHref
         * @return string
         */
-       public function generateSocialmediaIcon($strHref)
+       public function getSocialmediaIcon($strHref)
        {
 
-              return MemberRatingHelper::generateSocialmediaIcon($strHref);
+              return MemberRatingHelper::getSocialmediaIcon($strHref);
        }
 
 }

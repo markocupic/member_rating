@@ -36,7 +36,7 @@ class MemberRatingHelper extends \System
         * @param $strLink
         * @return string
         */
-       private static function getSocialmediaIconSRC($strLink)
+       private static function _getSocialmediaIconSRC($strLink)
        {
 
               $arrNeedle = array();
@@ -80,10 +80,10 @@ class MemberRatingHelper extends \System
         * @param $strHref
         * @return string
         */
-       public static function generateSocialmediaIcon($strHref)
+       public static function getSocialmediaIcon($strHref)
        {
 
-              $src = self::getSocialmediaIconSRC($strHref);
+              $src = self::_getSocialmediaIconSRC($strHref);
               if ($src != '')
               {
                      $objFile = new \File($src, true);
@@ -130,8 +130,7 @@ class MemberRatingHelper extends \System
                             {
                                    continue;
                             }
-                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1],
-                                   'icon' => $arrLine[2]);
+                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1], 'icon' => $arrLine[2]);
                      }
               }
               krsort($arrayGrades);
@@ -160,7 +159,7 @@ class MemberRatingHelper extends \System
                             }
                      }
               }
-              return $arrReturn[$key] ? $arrReturn[$key] : false;
+              return $arrReturn[$key] ? $arrReturn[$key] : null;
 
        }
 
@@ -177,44 +176,43 @@ class MemberRatingHelper extends \System
        {
 
               $objMember = \MemberModel::findByPk($memberId);
-              if ($objMember === null)
+              if ($objMember !== null)
               {
-                     return false;
-              }
-              $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
-              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size, 'class' => strlen($class) ? ' class="' . $class . '"' : '',);
+                     $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
+                     $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size, 'class' => strlen($class) ? ' class="' . $class . '"' : '',);
 
-              $src = false;
-              $objFile = \FilesModel::findByUuid($objMember->avatar);
-              if ($objFile !== null)
-              {
-                     if (is_file(TL_ROOT . '/' . $objFile->path))
+                     $src = null;
+                     $objFile = \FilesModel::findByUuid($objMember->avatar);
+                     if ($objFile !== null)
                      {
-                            $src = $objFile->path;
+                            if (is_file(TL_ROOT . '/' . $objFile->path))
+                            {
+                                   $src = $objFile->path;
+                            }
+                     }
+                     else
+                     {
+                            $path = $objMember->gender == 'female' ? $objModule->imageDir . '/avatars/female.png' : $objModule->imageDir . '/avatars/male.png';
+                            if (is_file(TL_ROOT . '/' . $path))
+                            {
+                                   $src = $path;
+                            }
+                     }
+
+                     // return default avatar
+                     if (!$src)
+                     {
+                            $src = $objMember->gender == 'female' ? 'system/modules/member_rating/assets/images/avatars/female.png' : 'system/modules/member_rating/assets/images/avatars/male.png';
+                     }
+
+                     // return image markup
+                     $avatar['src'] = TL_FILES_URL . \Image::get($src, $arrSize[0], $arrSize[1], $arrSize[2]);
+                     if (strlen($avatar['src']))
+                     {
+                            return sprintf('<img src="%s" %s alt="%s" title="%s"%s>', $avatar['src'], $avatar['size'], $avatar['alt'], $avatar['title'], $avatar['class']);
                      }
               }
-              else
-              {
-                     $path = $objMember->gender == 'female' ? $objModule->imageDir . '/avatars/female.png' : $objModule->imageDir . '/avatars/male.png';
-                     if (is_file(TL_ROOT . '/' . $path))
-                     {
-                            $src = $path;
-                     }
-              }
 
-              // return default avatar
-              if (!$src)
-              {
-                     $src = $objMember->gender == 'female' ? 'system/modules/member_rating/assets/images/avatars/female.png' : 'system/modules/member_rating/assets/images/avatars/male.png';
-              }
-
-              // return image markup
-              $avatar['src'] = TL_FILES_URL . \Image::get($src, $arrSize[0], $arrSize[1], $arrSize[2]);
-              if (strlen($avatar['src']))
-              {
-                     return sprintf('<img src="%s" %s alt="%s" title="%s"%s>', $avatar['src'], $avatar['size'], $avatar['alt'], $avatar['title'], $avatar['class']);
-              }
-              return false;
        }
 
        /**
@@ -225,19 +223,14 @@ class MemberRatingHelper extends \System
        {
 
               $objMember = \MemberModel::findByPk($memberId);
-              if ($objMember === null)
+              if ($objMember !== null)
               {
-                     return false;
+                     if (!empty($objMember->socialmediaLinks))
+                     {
+                            return deserialize($objMember->socialmediaLinks);
+                     }
               }
 
-              if (empty($objMember->socialmediaLinks))
-              {
-                     return false;
-              }
-              else
-              {
-                     return deserialize($objMember->socialmediaLinks);
-              }
        }
 
        /**

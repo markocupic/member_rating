@@ -12,5 +12,5 @@
 // fields
 $GLOBALS['TL_LANG']['tl_module']['blockingTime']        = array('Sperrzeit', 'Legen Sie die Sperrzeit in Sekunden fest, wie lange gewartet werden soll, bis Mitglieder erneut eine Wertung abgeben können.');
 $GLOBALS['TL_LANG']['tl_module']['detailPage']          = array('Detailansicht', 'Legen Sie die Seite für die Detailansicht fest.');
-$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage']     = array('Email Benachrichtigung', 'Legen Sie die Seite für die Emailbenachrichtigung fest.');
+$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage']     = array('Email Benachrichtigung', 'Legen Sie die Weiterleitungsseite für die Emailbenachrichtigung fest.');
 $GLOBALS['TL_LANG']['tl_module']['notifyRatedUser']     = array('Bewertete Mitglieder benachrichtigen', '');

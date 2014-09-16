@@ -28,7 +28,7 @@
             <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
                 <div class="image_container">
                     <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                        <?php echo $this->module->generateSocialmediaIcon($href); ?>
+                        <?php echo $this->module->getSocialmediaIcon($href); ?>
                     </a>
                     <img src="<?php echo TL_FILES_URL . $this->imageDir; ?>/cancel-circle.png" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
                 </div>
@@ -76,7 +76,7 @@
             <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
             <div class="image_container">
                 <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                    <?php echo $this->module->generateSocialmediaIcon($href); ?>
+                    <?php echo $this->module->getSocialmediaIcon($href); ?>
                 </a>
             </div>
             <?php endforeach; ?>

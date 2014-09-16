@@ -49,40 +49,18 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'] = array
        'sql'                     => "blob NULL"
 );
 
-
-$GLOBALS['TL_DCA']['tl_member']['fields']['avatar'] = array
-(
-       'label'     => &$GLOBALS['TL_LANG']['tl_member']['avatar'],
-       'exclude'   => true,
-       'inputType' => 'text',
-       'eval'      => array
-       (
-              'fieldType'      => 'radio',
-              'filesOnly'      => true,
-              'tl_class'       => 'clr',
-              //'filename'       => 'member_%s',
-              'feViewable'     => true,
-              'feEditable'     => true,
-              'feGroup'        => 'personal',
-              //'doNotOverwrite' => !$GLOBALS['TL_CONFIG']['avatar_rename']
-       ),
-       'sql'       => "binary(16) NULL"
-);
-
-if(file_exists(TL_ROOT . '/system/modules/avatar')){
-       $GLOBALS['TL_DCA']['tl_member']['fields']['avatar']['inputType'] = 'avatar';
-}
-
-/**
- * Class tl_member_member_rating
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- * @copyright  Marko Cupic 2014
- * @author     Marko Cupic
- * @package    Controller
- */
-class tl_member_member_rating extends tl_member
+if(!file_exists(TL_ROOT . '/system/modules/avatar'))
 {
+       $GLOBALS['TL_DCA']['tl_member']['fields']['avatar'] = array(
+              'label' => &$GLOBALS['TL_LANG']['tl_member']['avatar'], 'exclude' => true, 'inputType' => 'text',
+              'eval' => array(
+                     'fieldType' => 'radio',
+                     'filesOnly' => true,
+                     'tl_class' => 'clr',
+                     'feViewable' => true,
+                     'feEditable' => true,
+                     'feGroup' => 'personal',
+              ),
+              'sql' => "binary(16) NULL"
+       );
 }
-
-?>
