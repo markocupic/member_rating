@@ -26,7 +26,6 @@ class RatedMemberList extends \Module
        public $imageDir = 'system/modules/member_rating/assets/images';
 
 
-
        /**
         * @return string
         */
@@ -51,11 +50,9 @@ class RatedMemberList extends \Module
                      $this->User = \FrontendUser::getInstance();
               }
 
-              // overwrite default imageDir if a custom directory was selected
-              if (($imageDir = MemberRatingHelper::getImageDir($this)) !== null)
-              {
-                     $this->imageDir = $imageDir;
-              }
+              // set imageDir if a custom directory was selected
+              MemberRatingHelper::setImageDir($this->imageDir);
+              $this->imageDir = MemberRatingHelper::getImageDir();
 
               return parent::generate();
 
@@ -91,9 +88,13 @@ class RatedMemberList extends \Module
 
                      $row['hrefDetailPage'] = $href ? sprintf($href, $row['id']) : false;
                      // get avatar of member
-                     $arrSize = array(50, 50, 'center_center');
-                     $title = $row['firstname'] . ' ' . $row['lastname'] ;
-                     $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
+                     $arrSize = array(
+                            50,
+                            50,
+                            'center_center'
+                     );
+                     $title = $row['firstname'] . ' ' . $row['lastname'];
+                     $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                      $arrRows[] = $row;
               }
 

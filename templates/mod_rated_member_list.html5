@@ -13,7 +13,7 @@
                     <div class="col_1" style="position:absolute; left:0;">
                         <div class="image_container">
                             <?php if($member['hrefDetailPage']): ?><a href="<?php echo $member['hrefDetailPage']; ?>"><?php endif; ?>
-                            <img src="<?php echo $member['avatar']['src']; ?>" <?php echo $member['avatar']['size']; ?> alt="<?php echo $member['avatar']['alt']; ?>" title="<?php echo $member['avatar']['title']; ?>">
+                                <?php echo $member['avatar']; ?>
                             <?php if($member['hrefDetailPage']): ?></a><?php endif; ?>
                         </div>
                     </div>

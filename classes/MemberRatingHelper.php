@@ -15,6 +15,12 @@ class MemberRatingHelper extends \System
 {
 
        /**
+        * @var string
+        */
+       public $imageDir = 'system/modules/member_rating/assets/images';
+
+
+       /**
         * get score of a member
         * @param $id
         * @return string
@@ -27,11 +33,12 @@ class MemberRatingHelper extends \System
               return $score;
        }
 
+
        /**
         * @param $strLink
         * @return string
         */
-       public static function getSocialmediaIconSRC($strLink)
+       private static function getSocialmediaIconSRC($strLink)
        {
 
               $arrNeedle = array();
@@ -70,6 +77,7 @@ class MemberRatingHelper extends \System
               }
 
        }
+
 
        /**
         * @param $strHref
@@ -126,8 +134,11 @@ class MemberRatingHelper extends \System
                             {
                                    continue;
                             }
-                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1],
-                                   'icon' => $arrLine[2]);
+                            $arrayGrades[$arrLine[0]] = array(
+                                   'score' => $arrLine[0],
+                                   'label' => $arrLine[1],
+                                   'icon' => $arrLine[2]
+                            );
                      }
               }
               krsort($arrayGrades);
@@ -160,13 +171,14 @@ class MemberRatingHelper extends \System
 
        }
 
+
        /**
         * @param $memberId
         * @param array $arrSize
         * @param $objModule
         * @return bool|string
         */
-       public static function getAvatar($memberId, array $arrSize, $alt = '', $title = '', $objModule)
+       public static function getAvatar($memberId, array $arrSize, $alt = '', $title = '', $class = '', $objModule)
        {
 
               $objMember = \MemberModel::findByPk($memberId);
@@ -175,7 +187,12 @@ class MemberRatingHelper extends \System
                      return false;
               }
               $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
-              $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size);
+              $avatar = array(
+                     'alt' => specialchars($alt),
+                     'title' => specialchars($title),
+                     'size' => $size,
+                     'class' => strlen($class) ? ' class="' . $class . '"' : '',
+              );
 
               $objFile = \FilesModel::findByUuid($objMember->avatar);
               if ($objFile !== null)
@@ -193,9 +210,13 @@ class MemberRatingHelper extends \System
                             $avatar['src'] = TL_FILES_URL . \Image::get($path, 150, 150, 'center_center');
                      }
               }
+              if ($avatar['src'])
+              {
+                     return sprintf('<img src="%s" %s alt="%s" title="%s"%s>', $avatar['src'], $avatar['size'], $avatar['alt'], $avatar['title'], $avatar['class']);
+              }
 
-              return $avatar;
        }
+
 
        /**
         * @param $memberId
@@ -219,6 +240,7 @@ class MemberRatingHelper extends \System
                      return deserialize($objMember->socialmediaLinks);
               }
        }
+
 
        /**
         * @param null $id
@@ -248,24 +270,46 @@ class MemberRatingHelper extends \System
               return $username;
        }
 
+
        /**
-        * @return mixed|null
+        * @return string
         */
        public static function getImageDir()
        {
 
-              if (!empty($GLOBALS['TL_CONFIG']['customImageDir']))
+              return MEMBER_RATING_IMAGE_DIR;
+       }
+
+
+       /**
+        * @param $strPath
+        */
+       public static function setImageDir($strPath)
+       {
+
+              if (!defined('MEMBER_RATING_IMAGE_DIR'))
               {
-                     $objFile = \FilesModel::findByUuid(trim($GLOBALS['TL_CONFIG']['customImageDir']));
-              }
-              if ($objFile !== null)
-              {
-                     if (is_dir(TL_ROOT . '/' . $objFile->path))
+                     if (!empty($GLOBALS['TL_CONFIG']['customImageDir']))
                      {
-                            return $objFile->path;
+                            $objFile = \FilesModel::findByUuid(trim($GLOBALS['TL_CONFIG']['customImageDir']));
+                            if ($objFile !== null)
+                            {
+                                   if (is_dir(TL_ROOT . '/' . $objFile->path))
+                                   {
+                                          define('MEMBER_RATING_IMAGE_DIR', $objFile->path);
+                                   }
+                            }
+                            else
+                            {
+                                   define('MEMBER_RATING_IMAGE_DIR', $strPath);
+                            }
+
+                     }
+                     else
+                     {
+                            define('MEMBER_RATING_IMAGE_DIR', $strPath);
                      }
               }
-              return null;
        }
 
 }

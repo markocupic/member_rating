@@ -29,6 +29,7 @@ class MemberRating extends \Module
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
+
        /**
         * @param $objModule
         * @param string $strColumn
@@ -40,6 +41,7 @@ class MemberRating extends \Module
 
               return parent::__construct($objModule, $strColumn);
        }
+
 
        /**
         * @return string
@@ -131,15 +133,14 @@ class MemberRating extends \Module
                      return;
               }
 
-              // overwrite default imageDir if a custom directory was selected
-              if (($imageDir = MemberRatingHelper::getImageDir($this)) !== null)
-              {
-                     $this->imageDir = $imageDir;
-              }
+              // set imageDir if a custom directory was selected
+              MemberRatingHelper::setImageDir($this->imageDir);
+              $this->imageDir = MemberRatingHelper::getImageDir();
 
               return parent::generate();
 
        }
+
 
        /**
         * Generate the module
@@ -163,9 +164,13 @@ class MemberRating extends \Module
               {
                      // ***** LOGGED USER PROFILE *****
                      // get avatar of logged in user
-                     $arrSize = array(150, 150, 'center_center');
+                     $arrSize = array(
+                            150,
+                            150,
+                            'center_center'
+                     );
                      $title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
-                     $this->loggedInUser->avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, $this);
+                     $this->loggedInUser->avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this);
 
                      // socialmedia links
                      MemberRatingHelper::getSocialmediaLinks($this->loggedInUser->id);
@@ -179,9 +184,13 @@ class MemberRating extends \Module
 
               // ***** RATED USER PROFILE *****
               // get avatar of logged in user
-              $arrSize = array(150, 150, 'center_center');
+              $arrSize = array(
+                     150,
+                     150,
+                     'center_center'
+              );
               $title = $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname;
-              $this->ratedUser->avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, 'avatar', $title, $this); // get socialmedia links
+              $this->ratedUser->avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this); // get socialmedia links
 
               // socialmedia links
               $this->ratedUser->socialmediaLinks = MemberRatingHelper::getSocialmediaLinks($this->ratedUser->id);
@@ -204,9 +213,13 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(50, 50, 'center_center');
+                            $arrSize = array(
+                                   50,
+                                   50,
+                                   'center_center'
+                            );
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
-                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                      }
                      $arrTop3[] = $row;
               }
@@ -233,9 +246,13 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(50, 50, 'center_center');
+                            $arrSize = array(
+                                   50,
+                                   50,
+                                   'center_center'
+                            );
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
-                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, $this);
+                            $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                             // toggle visibility icon
                             $visibility = $row['published'] ? 'visible.png' : 'invisible.png';
                             $row['visibility_icon_src'] = TL_FILES_URL . sprintf($this->imageDir . '/%s', $visibility);
@@ -286,6 +303,7 @@ class MemberRating extends \Module
               }
        }
 
+
        /**
         * generate voting-form
         */
@@ -307,10 +325,14 @@ class MemberRating extends \Module
               $objComment = new \CommentsModel();
 
               // Build the form
-              $arrFF = array('comment', 'score', 'captcha');
+              $arrFF = array(
+                     'comment',
+                     'score',
+                     'captcha'
+              );
               foreach ($arrFF as $field)
               {
-                     $arrData = & $GLOBALS['TL_DCA']['tl_comments']['fields'][$field];
+                     $arrData = &$GLOBALS['TL_DCA']['tl_comments']['fields'][$field];
                      $strClass = $GLOBALS['TL_FFL'][$arrData['inputType']];
                      $arrData['eval']['tableless'] = 'true';
                      $arrData['label'] = $GLOBALS['TL_LANG']['tl_comments'][$field][0];
@@ -400,6 +422,7 @@ class MemberRating extends \Module
               $this->Template->arrFields = $arrFields;
        }
 
+
        /**
         * handle ajax requests
         */
@@ -444,6 +467,7 @@ class MemberRating extends \Module
               exit;
        }
 
+
        /**
         * generate socialmedia-links textfield
         */
@@ -452,7 +476,7 @@ class MemberRating extends \Module
 
               $this->Template->socialMediaFormId = 'tl_member_' . $this->id;
 
-              $arrData = & $GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'];
+              $arrData = &$GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'];
               $field = 'socialmediaLinks';
               $strClass = $GLOBALS['TL_FFL'][$arrData['inputType']];
               $arrData['eval']['tableless'] = 'true';
@@ -505,6 +529,7 @@ class MemberRating extends \Module
               }
        }
 
+
        /**
         * @param $objComment
         */
@@ -547,13 +572,22 @@ class MemberRating extends \Module
               // text version
               $strContent = \String::decodeEntities($strContent);
               $strContent = strip_tags($strContent);
-              $strContent = str_replace(array('[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
+              $strContent = str_replace(array(
+                                               '[&]',
+                                               '[lt]',
+                                               '[gt]'
+                                        ), array(
+                                               '&',
+                                               '<',
+                                               '>'
+                                        ), $strContent);
               $objEmail->text = $strContent;
 
               $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
               $objEmail->fromName = $GLOBALS['TL_ADMIN_NAME'];
               $objEmail->sendTo($objRatedMember->email);
        }
+
 
        /**
         * @param $strHref

@@ -10,7 +10,7 @@
             <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
             <div class="avatar">
                 <div class="image_container">
-                    <img src="<?php echo $this->loggedInUser->avatar['src']; ?>" <?php echo $this->loggedInUser->avatar['size']; ?> alt="<?php echo $this->loggedInUser->avatar['alt']; ?>" title="<?php echo $this->loggedInUser->avatar['title']; ?>">
+                    <?php echo $this->loggedInUser->avatar; ?>
                     <?php if($this->loggedInUser->gradeIcon): ?>
                         <?php echo $this->loggedInUser->gradeIcon; ?>
                     <?php endif; ?>
@@ -59,7 +59,7 @@
         <h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
         <div class="avatar">
             <div class="image_container">
-                <img src="<?php echo $this->ratedUser->avatar['src']; ?>" <?php echo $this->ratedUser->avatar['size']; ?> alt="<?php echo $this->ratedUser->avatar['alt']; ?>" title="<?php echo $this->ratedUser->avatar['title']; ?>">
+                <?php echo $this->ratedUser->avatar; ?>
                 <?php if($this->ratedUser->gradeIcon): ?>
                 <?php echo $this->ratedUser->gradeIcon; ?>
                 <?php endif; ?>
@@ -93,7 +93,7 @@
                 <div class="row">
                     <div class="col_0">
                         <div class="image_container">
-                            <img src="<?php echo $comment['avatar']['src']; ?>" <?php echo $comment['avatar']['size']; ?> alt="<?php echo $comment['avatar']['alt']; ?>" title="<?php echo $comment['avatar']['title']; ?>">
+                            <?php echo $comment['avatar']; ?>
                         </div>
                     </div>
                     <div class="col_1">
@@ -126,7 +126,7 @@
                             </div>
                             <div class="col_1">
                                 <div class="image_container">
-                                    <img src="<?php echo $comment['avatar']['src']; ?>" <?php echo $comment['avatar']['size']; ?> alt="<?php echo $comment['avatar']['alt']; ?>" title="<?php echo $comment['avatar']['title']; ?>">
+                                    <?php echo $comment['avatar']; ?>
                                 </div>
                             </div>
                             <div class="col_2">

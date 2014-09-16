@@ -25,10 +25,17 @@ if (strpos($GLOBALS['TL_DCA']['tl_member']['palettes']['default'], '{personal_le
 } else {
 	$GLOBALS['TL_DCA']['tl_member']['palettes']['default'] = str_replace('{personal_legend},','{personal_legend},punktestand,', $GLOBALS['TL_DCA']['tl_member']['palettes']['default']);
 }
-if (strpos($GLOBALS['TL_DCA']['tl_member']['palettes']['default'], '{personal_legend},') === false) {
-       $GLOBALS['TL_DCA']['tl_member']['palettes']['default'] .= ',avatar';
-} else {
-       $GLOBALS['TL_DCA']['tl_member']['palettes']['default'] = str_replace('{personal_legend},','{personal_legend},avatar,', $GLOBALS['TL_DCA']['tl_member']['palettes']['default']);
+
+if(!file_exists(TL_ROOT . '/system/modules/avatar'))
+{
+       if (strpos($GLOBALS['TL_DCA']['tl_member']['palettes']['default'], '{personal_legend},') === false)
+       {
+              $GLOBALS['TL_DCA']['tl_member']['palettes']['default'] .= ',avatar';
+       }
+       else
+       {
+              $GLOBALS['TL_DCA']['tl_member']['palettes']['default'] = str_replace('{personal_legend},', '{personal_legend},avatar,', $GLOBALS['TL_DCA']['tl_member']['palettes']['default']);
+       }
 }
 
 
@@ -47,20 +54,25 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['avatar'] = array
 (
        'label'     => &$GLOBALS['TL_LANG']['tl_member']['avatar'],
        'exclude'   => true,
-       'inputType' => 'avatar',
+       'inputType' => 'text',
        'eval'      => array
        (
               'fieldType'      => 'radio',
               'filesOnly'      => true,
               'tl_class'       => 'clr',
-              'filename'       => 'member_%s',
+              //'filename'       => 'member_%s',
               'feViewable'     => true,
               'feEditable'     => true,
               'feGroup'        => 'personal',
-              'doNotOverwrite' => !$GLOBALS['TL_CONFIG']['avatar_rename']
+              //'doNotOverwrite' => !$GLOBALS['TL_CONFIG']['avatar_rename']
        ),
        'sql'       => "binary(16) NULL"
 );
+
+if(file_exists(TL_ROOT . '/system/modules/avatar')){
+       $GLOBALS['TL_DCA']['tl_member']['fields']['avatar']['inputType'] = 'avatar';
+}
+
 /**
  * Class tl_member_member_rating
  *
