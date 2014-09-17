@@ -34,7 +34,6 @@ class RatedMemberList extends \Module
               if (TL_MODE == 'BE')
               {
                      $objTemplate = new \BackendTemplate('be_wildcard');
-
                      $objTemplate->wildcard = '### ' . utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['member_rating'][0]) . ' ###';
                      $objTemplate->title = $this->headline;
                      $objTemplate->id = $this->id;
@@ -71,23 +70,39 @@ class RatedMemberList extends \Module
                      $href = $this->generateFrontendUrl($objDetailPage->row(), ((\Config::get('useAutoItem') && !\Config::get('disableAlias')) ? '/%s' : '/member/%s'), $objDetailPage->language);
               }
 
-              $objMember = $this->Database->prepare('SELECT * FROM tl_member WHERE disable = ? ORDER BY firstname ASC, lastname ASC')->execute(0);
+              $objMember = $this->Database->prepare('SELECT * FROM tl_member WHERE disable = ?')->execute(0);
               $arrRows = array();
               while ($row = $objMember->fetchAssoc())
               {
+                     // score and grade
                      $row['score'] = MemberRatingHelper::getScore($row['id']);
                      $row['gradeLabel'] = MemberRatingHelper::getGrade($row['id'], 'label');
                      $row['gradeIcon'] = MemberRatingHelper::getGrade($row['id'], 'label');
 
-
+                     // link to detail page
                      $row['hrefDetailPage'] = $href ? sprintf($href, $row['id']) : false;
+
                      // get avatar of member
-                     $arrSize = array(50, 50, 'center_center');
+                     $arrSize = deserialize($this->avatarSizeListing);
                      $title = $row['firstname'] . ' ' . $row['lastname'];
                      $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
+
                      $arrRows[] = $row;
               }
 
+              // Sorting
+              $arrSorting = array();
+              if(!empty($this->sortingField1) && !empty($this->sortingDirection1)){
+                     $arrSorting[$this->sortingField1] = constant($this->sortingDirection1);
+              }
+              if(!empty($this->sortingField2) && !empty($this->sortingDirection2)){
+                     $arrSorting[$this->sortingField2] = constant($this->sortingDirection2);
+              }
+              if(!empty($this->sortingField3) && !empty($this->sortingDirection3)){
+                     $arrSorting[$this->sortingField3] = constant($this->sortingDirection3);
+              }
+
+              $arrRows = MemberRatingHelper::sortArrayByFields($arrRows, $arrSorting);
               $this->Template->rows = count($arrRows) ? $arrRows : false;
        }
 

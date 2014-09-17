@@ -16,7 +16,9 @@ $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available'] = 'Zu diesem 
 $GLOBALS['TL_LANG']['MOD']['member_rating']['score'] = 'Punkte';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['current_score_of'] = 'Aktueller Punktestand von';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['reason_why'] = 'Grund';
-
+$GLOBALS['TL_LANG']['MOD']['member_rating']['invalidToken'] = 'Ungültiges oder abgelaufenes Token.';
+$GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenDeleted'] = 'Der Datensatz wurde erfolgreich gelöscht.';
+$GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'] = 'Der Datensatz wurde erfolgreich aktiviert.';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by'] = 'Kommentar von';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['your_rating'] = 'Deine Wertung';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked'] = array('Formular gesperrt', 'Sie haben erst vor kurzem bei diesem Mitglied eine Bewertung abgegeben.');

@@ -35,6 +35,7 @@ class MemberRating extends \Module
         */
        protected $loggedInUser;
 
+
        /**
         * @param $objModule
         * @param string $strColumn
@@ -46,6 +47,7 @@ class MemberRating extends \Module
 
               return parent::__construct($objModule, $strColumn);
        }
+
 
        /**
         * @return string
@@ -84,7 +86,7 @@ class MemberRating extends \Module
                      $objComments = \CommentsModel::findByActivation_token(\Input::get('activation_token'));
                      if ($objComments === null)
                      {
-                            die(utf8_decode('Ungültiges oder abgelaufenes Aktivierungstoken!'));
+                            die(utf8_decode($GLOBALS['TL_LANG']['MOD']['member_rating']['invalidToken']));
                      }
 
                      // delete or publish comment
@@ -92,6 +94,11 @@ class MemberRating extends \Module
                      {
                             $dbChange = true;
                             $objComments->delete();
+                            $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
+                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_DeleteComment)) !== null)
+                            {
+                                   $this->redirect($this->generateFrontendUrl($objNextPage->row()));
+                            }
                      }
                      elseif (\Input::get('publish') == 'true')
                      {
@@ -99,25 +106,20 @@ class MemberRating extends \Module
                             $objComments->published = 1;
                             $objComments->activation_token = '';
                             $objComments->save();
-                     }
-                     else
-                     {
-                            //
-                     }
-
-                     if ($this->emailNotifyPage && $dbChange === true)
-                     {
-                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage)) !== null)
+                            $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
+                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_ActivateComment)) !== null)
                             {
                                    $this->redirect($this->generateFrontendUrl($objNextPage->row()));
                             }
                      }
                      else
                      {
-                            if ($dbChange === true)
-                            {
-                                   die('Datenbankänderungen wurden übernommen.');
-                            }
+                            //
+                     }
+
+                     if ($dbChange === true)
+                     {
+                            die($msg);
                      }
                      exit();
               }
@@ -145,6 +147,7 @@ class MemberRating extends \Module
 
        }
 
+
        /**
         * Generate the module
         */
@@ -167,7 +170,7 @@ class MemberRating extends \Module
               {
                      // ***** LOGGED USER PROFILE *****
                      // get avatar of logged in user
-                     $arrSize = array(150, 150, 'center_center');
+                     $arrSize = deserialize($this->avatarSizeProfile);
                      $title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
                      $this->loggedInUser->avatar = MemberRatingHelper::getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this);
 
@@ -183,7 +186,7 @@ class MemberRating extends \Module
 
               // ***** RATED USER PROFILE *****
               // get avatar of logged in user
-              $arrSize = array(150, 150, 'center_center');
+              $arrSize = deserialize($this->avatarSizeProfile);
               $title = $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname;
               $this->ratedUser->avatar = MemberRatingHelper::getAvatar($this->ratedUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this); // get socialmedia links
 
@@ -208,7 +211,7 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(50, 50, 'center_center');
+                            $arrSize = deserialize($this->avatarSizeListing);
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
                             $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                      }
@@ -237,7 +240,7 @@ class MemberRating extends \Module
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
                             // avatar
-                            $arrSize = array(50, 50, 'center_center');
+                            $arrSize = deserialize($this->avatarSizeListing);
                             $title = $objMember->firstname . ' ' . $objMember->lastname;
                             $row['avatar'] = MemberRatingHelper::getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
                             // toggle visibility icon
@@ -290,6 +293,7 @@ class MemberRating extends \Module
               }
        }
 
+
        /**
         * generate voting-form
         */
@@ -311,7 +315,11 @@ class MemberRating extends \Module
               $objComment = new \CommentsModel();
 
               // Build the form
-              $arrFF = array('comment', 'score', 'captcha');
+              $arrFF = array(
+                     'comment',
+                     'score',
+                     'captcha'
+              );
               foreach ($arrFF as $field)
               {
                      $arrData = &$GLOBALS['TL_DCA']['tl_comments']['fields'][$field];
@@ -405,6 +413,7 @@ class MemberRating extends \Module
               $this->Template->arrFields = $arrFields;
        }
 
+
        /**
         * handle ajax requests
         */
@@ -448,6 +457,7 @@ class MemberRating extends \Module
               }
               exit;
        }
+
 
        /**
         * generate socialmedia-links textfield
@@ -510,6 +520,7 @@ class MemberRating extends \Module
               }
        }
 
+
        /**
         * @param $objComment
         */
@@ -552,13 +563,22 @@ class MemberRating extends \Module
               // text version
               $strContent = \String::decodeEntities($strContent);
               $strContent = strip_tags($strContent);
-              $strContent = str_replace(array('[&]', '[lt]', '[gt]'), array('&', '<', '>'), $strContent);
+              $strContent = str_replace(array(
+                                               '[&]',
+                                               '[lt]',
+                                               '[gt]'
+                                        ), array(
+                                               '&',
+                                               '<',
+                                               '>'
+                                        ), $strContent);
               $objEmail->text = $strContent;
 
               $objEmail->from = $GLOBALS['TL_ADMIN_EMAIL'];
               $objEmail->fromName = $GLOBALS['TL_ADMIN_NAME'];
               $objEmail->sendTo($objRatedMember->email);
        }
+
 
        /**
         * @param $strHref

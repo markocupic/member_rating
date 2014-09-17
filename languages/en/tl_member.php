@@ -10,5 +10,6 @@
  */
 
 // fields
+$GLOBALS['TL_LANG']['tl_member']['score'] = array('Punktestand', 'Zeigt den aktuellen Punktestand.');
 $GLOBALS['TL_LANG']['tl_member']['socialmediaLinks'] = array('Socialmedia Links', 'Geben Sie hier die Links zu Ihren Socialmedia-Portalen an. -->  https://www.facebook.com/HansMustermann');
 $GLOBALS['TL_LANG']['tl_member']['avatar'] = array('Avatar', 'Das Bild wird in Frontend Modulen mit Ihrem Namen angezeigt.');
