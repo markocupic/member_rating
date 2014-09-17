@@ -14,35 +14,41 @@ namespace MCupic\MemberRating;
 class MemberRating extends \Module
 {
 
+
        /**
         * Template
         * @var string
         */
        protected $strTemplate = 'mod_member_rating';
 
+
        /**
+        * image directory
         * @var string
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
+
        /**
-        * @var
+        * rated user object
+        * @var object
         */
        protected $ratedUser;
 
+
        /**
-        * @var
+        * logged in user object
+        * @var object
         */
        protected $loggedInUser;
 
 
        /**
-        * @param $objModule
+        * @param object $objModule
         * @param string $strColumn
         */
        public function __construct($objModule, $strColumn = 'main')
        {
-
               define('MOD_MEMBER_RATING', 'true');
 
               return parent::__construct($objModule, $strColumn);
@@ -54,7 +60,6 @@ class MemberRating extends \Module
         */
        public function generate()
        {
-
               // Backend
               if (TL_MODE == 'BE')
               {
@@ -71,7 +76,6 @@ class MemberRating extends \Module
 
 
               // Frontend
-
               // set the item from the auto_item parameter
               if ($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
               {
@@ -82,46 +86,8 @@ class MemberRating extends \Module
               // activate comment by token via url
               if (strlen(\Input::get('activation_token')))
               {
-                     $dbChange = false;
-                     $objComments = \CommentsModel::findByActivation_token(\Input::get('activation_token'));
-                     if ($objComments === null)
-                     {
-                            die(utf8_decode($GLOBALS['TL_LANG']['MOD']['member_rating']['invalidToken']));
-                     }
-
-                     // delete or publish comment
-                     if (\Input::get('del') == 'true')
-                     {
-                            $dbChange = true;
-                            $objComments->delete();
-                            $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
-                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_DeleteComment)) !== null)
-                            {
-                                   $this->redirect($this->generateFrontendUrl($objNextPage->row()));
-                            }
-                     }
-                     elseif (\Input::get('publish') == 'true')
-                     {
-                            $dbChange = true;
-                            $objComments->published = 1;
-                            $objComments->activation_token = '';
-                            $objComments->save();
-                            $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
-                            if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_ActivateComment)) !== null)
-                            {
-                                   $this->redirect($this->generateFrontendUrl($objNextPage->row()));
-                            }
-                     }
-                     else
-                     {
-                            //
-                     }
-
-                     if ($dbChange === true)
-                     {
-                            die($msg);
-                     }
-                     exit();
+                     $this->activateOrDelete();
+                     exit;
               }
 
               // set the loggedInUser var
@@ -136,15 +102,14 @@ class MemberRating extends \Module
               $this->ratedUser = \MemberModel::findByPk($idRatedMember);
               if ($this->ratedUser === null)
               {
-                     return;
+                     return '';
               }
 
-              // set imageDir if a custom directory was selected
+              // overwrite imageDir if a custom directory was selected
               MemberRatingHelper::setImageDir($this->imageDir);
               $this->imageDir = MemberRatingHelper::getImageDir();
 
               return parent::generate();
-
        }
 
 
@@ -153,7 +118,6 @@ class MemberRating extends \Module
         */
        protected function compile()
        {
-
               $this->loadDataContainer('tl_comments');
               $this->loadDataContainer('tl_member');
               $this->loadLanguageFile('tl_comments');
@@ -181,7 +145,6 @@ class MemberRating extends \Module
                      $this->loggedInUser->score = MemberRatingHelper::getScore($this->loggedInUser->id);
                      $this->loggedInUser->gradeLabel = MemberRatingHelper::getGrade($this->loggedInUser->id, 'label');
                      $this->loggedInUser->gradeIcon = MemberRatingHelper::getGrade($this->loggedInUser->id, 'icon');
-
               }
 
               // ***** RATED USER PROFILE *****
@@ -192,6 +155,7 @@ class MemberRating extends \Module
 
               // socialmedia links
               $this->ratedUser->socialmediaLinks = MemberRatingHelper::getSocialmediaLinks($this->ratedUser->id);
+              $this->Template->deleteSocialmediaLinkIcon = TL_FILES_URL . MemberRatingHelper::getImageDir() . '/cancel_circle.png';
 
               // get score and grade of logged user
               $this->ratedUser->score = MemberRatingHelper::getScore($this->ratedUser->id);
@@ -255,8 +219,18 @@ class MemberRating extends \Module
               // MSC
               $this->Template->loggedInUser = $this->loggedInUser;
               $this->Template->ratedUser = $this->ratedUser;
-              $this->Template->imageDir = MemberRatingHelper::getImageDir();
-              $this->Template->module = $this;
+
+
+              // closures
+              $this->Template->getImageDir = function ()
+              {
+                     return TL_FILES_URL . MemberRatingHelper::getImageDir();
+              };
+              $this->Template->getSocialmediaIcon = function ($strHref)
+              {
+                     return MemberRatingHelper::getSocialmediaIcon($strHref);
+              };
+
 
               // add javascript language-file-object to template
               $strLang = "objLang = {";
@@ -270,7 +244,6 @@ class MemberRating extends \Module
                                    $strLang .= $kk . ": '" . $vv . "',";
                             }
                             $strLang .= "},";
-
                      }
                      else
                      {
@@ -299,7 +272,6 @@ class MemberRating extends \Module
         */
        protected function generateVotingForm()
        {
-
               if (!$this->loggedInUser || $this->loggedInUser->id == $this->ratedUser->id)
               {
                      return;
@@ -419,7 +391,6 @@ class MemberRating extends \Module
         */
        protected function handleAjax()
        {
-
               // delete socialmedia links
               if (\Input::get('act') == 'delSocialMediaLink' && \Input::post('type'))
               {
@@ -464,7 +435,6 @@ class MemberRating extends \Module
         */
        protected function generateSocialMediaLinksForm()
        {
-
               $this->Template->socialMediaFormId = 'tl_member_' . $this->id;
 
               $arrData = &$GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'];
@@ -526,7 +496,6 @@ class MemberRating extends \Module
         */
        public function notifyUser($objComment)
        {
-
               global $objPage;
               $objRatedMember = \MemberModel::findByPk($objComment->parent);
               if ($objRatedMember === null)
@@ -581,13 +550,49 @@ class MemberRating extends \Module
 
 
        /**
-        * @param $strHref
-        * @return string
+        * activateOrDelete
         */
-       public function getSocialmediaIcon($strHref)
+       protected function activateOrDelete()
        {
+              $dbChange = false;
+              $objComments = \CommentsModel::findByActivation_token(\Input::get('activation_token'));
+              if ($objComments === null)
+              {
+                     die(utf8_decode($GLOBALS['TL_LANG']['MOD']['member_rating']['invalidToken']));
+              }
 
-              return MemberRatingHelper::getSocialmediaIcon($strHref);
+              // delete or publish comment via url, received from a notification email
+              if (\Input::get('del') == 'true')
+              {
+                     $dbChange = true;
+                     $objComments->delete();
+                     $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
+                     if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_DeleteComment)) !== null)
+                     {
+                            $this->redirect($this->generateFrontendUrl($objNextPage->row()));
+                     }
+              }
+              elseif (\Input::get('publish') == 'true')
+              {
+                     $dbChange = true;
+                     $objComments->published = 1;
+                     $objComments->activation_token = '';
+                     $objComments->save();
+                     $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
+                     if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_ActivateComment)) !== null)
+                     {
+                            $this->redirect($this->generateFrontendUrl($objNextPage->row()));
+                     }
+              }
+              else
+              {
+                     //
+              }
+
+              if ($dbChange === true)
+              {
+                     die($msg);
+              }
+              exit();
        }
-
 }

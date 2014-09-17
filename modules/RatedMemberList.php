@@ -14,23 +14,26 @@ namespace MCupic\MemberRating;
 class RatedMemberList extends \Module
 {
 
+
        /**
         * Template
         * @var string
         */
        protected $strTemplate = 'mod_rated_member_list';
 
+
        /**
+        * image directory
         * @var string
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
+
 
        /**
         * @return string
         */
        public function generate()
        {
-
               if (TL_MODE == 'BE')
               {
                      $objTemplate = new \BackendTemplate('be_wildcard');
@@ -42,23 +45,21 @@ class RatedMemberList extends \Module
 
                      return $objTemplate->parse();
               }
-              // FE
 
-              // set imageDir if a custom directory was selected
+              // Frontend
+              // overwrite imageDir if a custom directory was selected
               MemberRatingHelper::setImageDir($this->imageDir);
               $this->imageDir = MemberRatingHelper::getImageDir();
 
               return parent::generate();
-
        }
+
 
        /**
         * Generate the module
         */
        protected function compile()
        {
-
-              global $objPage;
               // get href for the detail-page
               $objDetailPage = \PageModel::findWithDetails($this->detailPage);
               if ($objDetailPage === null)
@@ -92,18 +93,20 @@ class RatedMemberList extends \Module
 
               // Sorting
               $arrSorting = array();
-              if(!empty($this->sortingField1) && !empty($this->sortingDirection1)){
+              if (!empty($this->sortingField1) && !empty($this->sortingDirection1))
+              {
                      $arrSorting[$this->sortingField1] = constant($this->sortingDirection1);
               }
-              if(!empty($this->sortingField2) && !empty($this->sortingDirection2)){
+              if (!empty($this->sortingField2) && !empty($this->sortingDirection2))
+              {
                      $arrSorting[$this->sortingField2] = constant($this->sortingDirection2);
               }
-              if(!empty($this->sortingField3) && !empty($this->sortingDirection3)){
+              if (!empty($this->sortingField3) && !empty($this->sortingDirection3))
+              {
                      $arrSorting[$this->sortingField3] = constant($this->sortingDirection3);
               }
 
               $arrRows = MemberRatingHelper::sortArrayByFields($arrRows, $arrSorting);
               $this->Template->rows = count($arrRows) ? $arrRows : false;
        }
-
 }

@@ -19,6 +19,7 @@ class MemberRatingHelper extends \System
         */
        public $imageDir = 'system/modules/member_rating/assets/images';
 
+
        /**
         * get score of a member
         * @param $id
@@ -26,11 +27,11 @@ class MemberRatingHelper extends \System
         */
        public static function getScore($id)
        {
-
               $objPoints = \Database::getInstance()->prepare("SELECT SUM(score) as sumscore FROM tl_comments WHERE source = ? AND parent = ?")->execute('tl_member', $id);
               $score = $objPoints->sumscore <= 0 ? '0' : $objPoints->sumscore;
               return $score;
        }
+
 
        /**
         * @param $strLink
@@ -38,7 +39,6 @@ class MemberRatingHelper extends \System
         */
        private static function _getSocialmediaIconSRC($strLink)
        {
-
               $arrNeedle = array();
               $arrIcons = array();
               if (trim($GLOBALS['TL_CONFIG']['socialmediaLinks']) != '')
@@ -73,8 +73,8 @@ class MemberRatingHelper extends \System
               {
                      return $icon;
               }
-
        }
+
 
        /**
         * @param $strHref
@@ -82,7 +82,6 @@ class MemberRatingHelper extends \System
         */
        public static function getSocialmediaIcon($strHref)
        {
-
               $src = self::_getSocialmediaIconSRC($strHref);
               if ($src != '')
               {
@@ -97,11 +96,11 @@ class MemberRatingHelper extends \System
                                    $alt = 'socialmediaIcon';
                                    $title = specialchars($strHref);
                                    return sprintf('<img src="%s" %s alt="%s" title="%s" class="socialmediaIcon">', $src, $size, $alt, $title);
-
                             }
                      }
               }
        }
+
 
        /**
         * @param $score
@@ -109,7 +108,6 @@ class MemberRatingHelper extends \System
         */
        public static function getGrade($id, $key)
        {
-
               $score = self::getScore($id);
               if ($score == '0')
               {
@@ -130,7 +128,11 @@ class MemberRatingHelper extends \System
                             {
                                    continue;
                             }
-                            $arrayGrades[$arrLine[0]] = array('score' => $arrLine[0], 'label' => $arrLine[1], 'icon' => $arrLine[2]);
+                            $arrayGrades[$arrLine[0]] = array(
+                                   'score' => $arrLine[0],
+                                   'label' => $arrLine[1],
+                                   'icon' => $arrLine[2]
+                            );
                      }
               }
               krsort($arrayGrades);
@@ -160,8 +162,8 @@ class MemberRatingHelper extends \System
                      }
               }
               return $arrReturn[$key] ? $arrReturn[$key] : null;
-
        }
+
 
        /**
         * @param $memberId
@@ -179,7 +181,12 @@ class MemberRatingHelper extends \System
               if ($objMember !== null)
               {
                      $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
-                     $avatar = array('alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size, 'class' => strlen($class) ? ' class="' . $class . '"' : '',);
+                     $avatar = array(
+                            'alt' => specialchars($alt),
+                            'title' => specialchars($title),
+                            'size' => $size,
+                            'class' => strlen($class) ? ' class="' . $class . '"' : '',
+                     );
 
                      $src = null;
                      $objFile = \FilesModel::findByUuid($objMember->avatar);
@@ -212,8 +219,8 @@ class MemberRatingHelper extends \System
                             return sprintf('<img src="%s" %s alt="%s" title="%s"%s>', $avatar['src'], $avatar['size'], $avatar['alt'], $avatar['title'], $avatar['class']);
                      }
               }
-
        }
+
 
        /**
         * @param $memberId
@@ -221,7 +228,6 @@ class MemberRatingHelper extends \System
         */
        public static function getSocialmediaLinks($memberId)
        {
-
               $objMember = \MemberModel::findByPk($memberId);
               if ($objMember !== null)
               {
@@ -230,8 +236,8 @@ class MemberRatingHelper extends \System
                             return deserialize($objMember->socialmediaLinks);
                      }
               }
-
        }
+
 
        /**
         * @param null $id
@@ -240,7 +246,6 @@ class MemberRatingHelper extends \System
         */
        public static function findMemberByPk($id = null, $type = 'fullname')
        {
-
               $username = '';
               $objMember = \MemberModel::findByPk($id);
               if ($objMember !== null)
@@ -261,21 +266,21 @@ class MemberRatingHelper extends \System
               return $username;
        }
 
+
        /**
         * @return string
         */
        public static function getImageDir()
        {
-
               return MEMBER_RATING_IMAGE_DIR;
        }
+
 
        /**
         * @param $strPath
         */
        public static function setImageDir($strPath)
        {
-
               if (!defined('MEMBER_RATING_IMAGE_DIR'))
               {
                      if (!empty($GLOBALS['TL_CONFIG']['customImageDir']))
@@ -292,7 +297,6 @@ class MemberRatingHelper extends \System
                             {
                                    define('MEMBER_RATING_IMAGE_DIR', $strPath);
                             }
-
                      }
                      else
                      {
@@ -302,25 +306,37 @@ class MemberRatingHelper extends \System
        }
 
 
+       /**
+        * @param $arr
+        * @param $fields
+        * @return mixed
+        */
        public static function sortArrayByFields($arr, $fields)
        {
               $sortFields = array();
-              $args       = array();
+              $args = array();
 
-              foreach ($arr as $key => $row) {
-                     foreach ($fields as $field => $order) {
+              foreach ($arr as $key => $row)
+              {
+                     foreach ($fields as $field => $order)
+                     {
                             $sortFields[$field][$key] = $row[$field];
                      }
               }
 
-              foreach ($fields as $field => $order) {
+              foreach ($fields as $field => $order)
+              {
                      $args[] = $sortFields[$field];
 
-                     if (is_array($order)) {
-                            foreach ($order as $pt) {
+                     if (is_array($order))
+                     {
+                            foreach ($order as $pt)
+                            {
                                    $args[$pt];
                             }
-                     } else {
+                     }
+                     else
+                     {
                             $args[] = $order;
                      }
               }
@@ -331,5 +347,4 @@ class MemberRatingHelper extends \System
 
               return $arr;
        }
-
 }

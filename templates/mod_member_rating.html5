@@ -28,9 +28,9 @@
             <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
                 <div class="image_container">
                     <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                        <?php echo $this->module->getSocialmediaIcon($href); ?>
+                        <?php echo $this->getSocialmediaIcon($href); ?>
                     </a>
-                    <img src="<?php echo TL_FILES_URL . $this->imageDir; ?>/cancel-circle.png" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
+                    <img src="<?php echo $this->deleteSocialmediaLinkIcon; ?>" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
                 </div>
             <?php endforeach; ?>
             </div>
@@ -76,7 +76,7 @@
             <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
             <div class="image_container">
                 <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                    <?php echo $this->module->getSocialmediaIcon($href); ?>
+                    <?php echo $this->getSocialmediaIcon($href); ?>
                 </a>
             </div>
             <?php endforeach; ?>
@@ -170,7 +170,7 @@
                                 <!-- starbox -->
                                 <div id="starbox">
                                 <?php for($i=1;$i<6;$i++): ?>
-                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->imageDir; ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
+                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->getImageDir(); ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
                                 <?php endfor; ?>
                                 </div>
                                 <?php echo $this->fields; ?>

@@ -12,7 +12,7 @@ window.addEvent('domready', function () {
             title: objLang.remove_link
         });
 
-        if((deleteIcon = imgContainer.getElements('.removeSocialmediaIcon')[0])){
+        if ((deleteIcon = imgContainer.getElements('.removeSocialmediaIcon')[0])) {
             deleteIcon.inject(imgContainer, 'bottom');
             var smLink = imgContainer.getElements('a.socialmediaLink')[0];
 
@@ -81,11 +81,11 @@ function rate(el, value) {
             }
             if (i == value || i < value) {
                 //blue
-                star.src = 'system/modules/member_rating/assets/images/star_1.jpg';
+                star.src = 'system/modules/member_rating/assets/images/starrating/star_1.jpg';
             }
             else if (i > value) {
                 //grey
-                star.src = 'system/modules/member_rating/assets/images/star_2.jpg';
+                star.src = 'system/modules/member_rating/assets/images/starrating/star_2.jpg';
             } else {
                 //
             }
