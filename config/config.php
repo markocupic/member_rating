@@ -18,17 +18,14 @@
  */
 
 array_insert($GLOBALS['FE_MOD'], 2, array(
-       'member_rating' => array(
-              'member_rating' => 'MemberRating\\MemberRating',
-              'rated_member_list' => 'MemberRating\\RatedMemberList',
+       'module_type_member_rating' => array(
+              'member_rating_detail' => 'MemberRating\\MemberRatingDetail',
+              'member_rating_list' => 'MemberRating\\MemberRatingList',
        )
 ));
 
 if (TL_MODE == 'FE')
 {
-       $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/member_rating/assets/js/member_rating.js';
-       $GLOBALS['TL_CSS'][] = 'system/modules/member_rating/assets/css/member_rating.css';
-
        /**
         * Register the auto_item keywords
         */

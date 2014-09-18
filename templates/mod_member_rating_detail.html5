@@ -1,0 +1,195 @@
+<?php $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/member_rating/assets/js/member_rating.js'; ?>
+<?php $GLOBALS['TL_CSS'][] = 'system/modules/member_rating/assets/css/member_rating.css'; ?>
+
+<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+
+    <?php if ($this->headline): ?>
+        <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
+    <?php endif; ?>
+
+    <?php if(FE_USER_LOGGED_IN): ?>
+    <!-- avatar & user profile of logged in member -->
+    <div id="loggedInUserProfile">
+            <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
+            <div class="avatar">
+                <div class="image_container">
+                    <?php echo $this->loggedInUser->avatar; ?>
+                    <?php if($this->loggedInUser->gradeIcon): ?>
+                        <?php echo $this->loggedInUser->gradeIcon; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div id="gradeBox">
+                <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
+                <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+            </div>
+        </div>
+        <!-- socialmedia icons -->
+        <?php if($this->loggedInUser->socialmediaLinks): ?>
+            <div id="socialmediaLinks">
+            <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
+                <div class="image_container">
+                    <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
+                        <?php echo $this->getSocialmediaIcon($href); ?>
+                    </a>
+                    <img src="<?php echo $this->deleteSocialmediaLinkIcon; ?>" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
+                </div>
+            <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        <!-- socialmedia links form -->
+        <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->socialMediaFormId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
+
+        <div class="formbody">
+            <input type="hidden" name="FORM_SUBMIT" value="<?php echo $this->socialMediaFormId; ?>">
+            <input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
+
+            <div class="fields">
+                <?php echo $this->socialMediaTextField; ?>
+            </div>
+
+            <div class="submit_container">
+                <input type="submit" class="submit" value="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['add']; ?>">
+            </div>
+        </div>
+        </form>
+    <?php endif; ?>
+
+
+    <!-- avatar & profile of selected user -->
+    <div id="ratedUserProfile">
+        <h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
+        <div class="avatar">
+            <div class="image_container">
+                <?php echo $this->ratedUser->avatar; ?>
+                <?php if($this->ratedUser->gradeIcon): ?>
+                <?php echo $this->ratedUser->gradeIcon; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div id="gradeBox">
+            <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
+            <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+        </div>
+        <!-- socialmedia icons -->
+        <?php if($this->ratedUser->socialmediaLinks): ?>
+        <div id="socialmediaLinks">
+            <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
+            <div class="image_container">
+                <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
+                    <?php echo $this->getSocialmediaIcon($href); ?>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+
+    <!-- top3 list -->
+    <?php if($this->ratedUser->top3): ?>
+        <h2>Top 3</h2>
+        <div id="top3">
+            <?php foreach($this->ratedUser->top3 as $comment): ?>
+                <div class="row">
+                    <div class="col_0">
+                        <div class="image_container">
+                            <?php echo $comment['avatar']; ?>
+                        </div>
+                    </div>
+                    <div class="col_1">
+                        <div class="time"><?php echo $comment['time']; ?></div>
+                        <div class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?>: <?php echo $comment['score']; ?></div>
+                        <div class="author"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo \MemberRating\MemberRating::findMemberByPk($comment['owner'], 'fullname'); ?></div>
+                        <div class="text">
+                            <?php echo $comment['comment']; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <div style="clear:both;"></div>
+    <?php endif; ?>
+
+
+
+    <!-- all ratings -->
+    <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['all_ratings']; ?></h2>
+    <div id="allRatings">
+        <?php if($this->ratedUser->allRatings): ?>
+                <div class="notempty<?php echo ($this->ratedUser->id != $this->loggedInUser->id) ?: ' myprofile'; ?>">
+                    <?php foreach($this->ratedUser->allRatings as $comment): ?>
+                        <div class="row">
+                            <div class="col_0">
+                                <div class="image_container">
+                                    <img src="<?php echo $comment['visibility_icon_src']; ?>" alt="visibility-status" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish']; ?>" onclick="toggleVisibility(this,<?php echo $comment['id']; ?>)">
+                                </div>
+                            </div>
+                            <div class="col_1">
+                                <div class="image_container">
+                                    <?php echo $comment['avatar']; ?>
+                                </div>
+                            </div>
+                            <div class="col_2">
+                                <div class="time"><?php echo $comment['time']; ?></div>
+                                <div class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?>: <?php echo $comment['score']; ?></div>
+                                <div class="author"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo \MemberRating\MemberRating::findMemberByPk($comment['owner'], 'fullname'); ?></div>
+                                <div class="text">
+                                    <?php echo $comment['comment']; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <div style="clear:both;"></div>
+        <?php else: ?>
+            <div class="empty"><p><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?></p></div>
+        <?php endif; ?>
+    </div>
+
+
+    <!-- voting form -->
+    <?php if($this->loggedInUser && $this->loggedInUser->id != $this->ratedUser->id): ?>
+        <?php if($this->commentFormLocked): ?>
+            <div class="commentFormLocked">
+                <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked'][0]; ?></h2>
+                <p>
+                    <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked'][1]; ?>{{br}}
+                    <?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked_time'], $this->commentFormLockedTime); ?>
+                </p>
+            </div>
+        <?php else: ?>
+                <div id="yourRating">
+                    <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['your_rating']; ?></h2>
+
+                    <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->formId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
+                        <div class="formbody">
+                            <input type="hidden" name="FORM_SUBMIT" value="<?php echo $this->formId; ?>">
+                            <input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
+
+                            <div class="fields">
+                                <!-- starbox -->
+                                <div id="starbox">
+                                <?php for($i=1;$i<6;$i++): ?>
+                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->getImageDir(); ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
+                                <?php endfor; ?>
+                                </div>
+                                <?php echo $this->fields; ?>
+                             </div>
+                             <div class="submit_container">
+                                <input type="submit" class="submit" value="<?php echo $this->slabel; ?>">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+         <?php endif; ?>
+    <?php endif; ?>
+
+    <script>
+        <?php echo $this->JsLanguageObject; ?>
+        <?php echo $this->JsVarsObject; ?>
+    </script>
+
+</div>

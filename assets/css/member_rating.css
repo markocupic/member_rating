@@ -1,105 +1,139 @@
+/* list view*/
+/* list view*/
+/* list view*/
+.mod_member_rating_list .comment {
+	position: relative;
+}
+
+.mod_member_rating_list .col_1 {
+	position: absolute;
+	left: 0;
+}
+
+.mod_member_rating_list .col_2 {
+	left: 80px;
+	top: 0;
+	position: relative;
+	min-height: 80px;
+}
+
+/* detail view*/
+/* detail view*/
+/* detail view*/
 /* my avatar */
-.mod_member_rating .avatar .image_container img {
-    display: inline;
+.mod_member_rating_detail .avatar .image_container img {
+	display: inline;
 }
-.mod_member_rating .avatar .image_container {
-    border: 1px solid gray;
-    width: auto;
-    display: inline-block;
-    position: relative;
+
+.mod_member_rating_detail .avatar .image_container {
+	border: 1px solid gray;
+	width: auto;
+	display: inline-block;
+	position: relative;
 }
-.mod_member_rating .avatar .gradeIcon {
-    position: absolute;
-    top: -4px;
-    right: -20px;
+
+.mod_member_rating_detail .avatar .gradeIcon {
+	position: absolute;
+	top: -4px;
+	right: -20px;
 }
 
 /* socialmedia links */
-.mod_member_rating #socialmediaLinks .image_container {
-    display: inline;
-    margin-right: 10px;
-    position: relative;
-    z-index:1;
+.mod_member_rating_detail #socialmediaLinks .image_container {
+	display: inline;
+	margin-right: 10px;
+	position: relative;
+	z-index: 1;
 
 }
 
-.mod_member_rating #socialmediaLinks .removeSocialmediaIcon {
-    position: absolute;
-    right: -5px;
-    bottom: -5px;
-    z-index:2;
+.mod_member_rating_detail #socialmediaLinks .removeSocialmediaIcon {
+	position: absolute;
+	right: -5px;
+	bottom: -5px;
+	z-index: 2;
 }
 
 /* comments */
-.mod_member_rating .row {
-    position: relative;
+.mod_member_rating_detail .row {
+	position: relative;
 }
+
 /* top3*/
-.mod_member_rating #top3 .col_1 {
-    position: absolute;
-    left: 0;
+.mod_member_rating_detail #top3 .col_1 {
+	position: absolute;
+	left: 0;
 }
-.mod_member_rating #top3 .col_2 {
-    position: relative;
-    min-height: 80px;
-    top: 0;
+
+.mod_member_rating_detail #top3 .col_2 {
+	position: relative;
+	min-height: 80px;
+	top: 0;
 }
 
 /* top3 */
-.mod_member_rating #top3 .row {
-    position: relative;
+.mod_member_rating_detail #top3 .row {
+	position: relative;
 }
-.mod_member_rating #top3 .col_0 {
-    position: absolute;
-    top: 0;
-    left: 0;
+
+.mod_member_rating_detail #top3 .col_0 {
+	position: absolute;
+	top: 0;
+	left: 0;
 }
-.mod_member_rating #top3 .col_1 {
-    position: relative;
-    top: 0;
-    left: 50px;
-    min-height: 80px;
+
+.mod_member_rating_detail #top3 .col_1 {
+	position: relative;
+	top: 0;
+	left: 50px;
+	min-height: 80px;
 }
 
 /* all ratings */
-.mod_member_rating #allRatings .row {
-    position: relative;
+.mod_member_rating_detail #allRatings .row {
+	position: relative;
 }
-.mod_member_rating #allRatings .col_0 {
-    display: none;
+
+.mod_member_rating_detail #allRatings .col_0 {
+	display: none;
 }
-.mod_member_rating #allRatings .col_1 {
-    position: absolute;
-    top: 0;
-    left: 0;
+
+.mod_member_rating_detail #allRatings .col_1 {
+	position: absolute;
+	top: 0;
+	left: 0;
 }
-.mod_member_rating #allRatings .col_2 {
-    position: relative;
-    top: 0;
-    left: 50px;
-    min-height: 80px;
+
+.mod_member_rating_detail #allRatings .col_2 {
+	position: relative;
+	top: 0;
+	left: 50px;
+	min-height: 80px;
 }
+
 /* only display visibility icon to comment-owner*/
-.mod_member_rating #allRatings .myprofile .col_0 {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
+.mod_member_rating_detail #allRatings .myprofile .col_0 {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
-.mod_member_rating #allRatings .myprofile .col_1 {
-    position: absolute;
-    top: 0;
-    left: 50px;
+
+.mod_member_rating_detail #allRatings .myprofile .col_1 {
+	position: absolute;
+	top: 0;
+	left: 50px;
 }
-.mod_member_rating #allRatings .myprofile .col_2 {
-    position: relative;
-    top: 0;
-    left: 140px;
-    min-height: 80px;
+
+.mod_member_rating_detail #allRatings .myprofile .col_2 {
+	position: relative;
+	top: 0;
+	left: 140px;
+	min-height: 80px;
 }
 
 /*starbox*/
-.mod_member_rating #starbox {
-    display: inline;
+.mod_member_rating_detail #starbox {
+	display: inline;
 }
 
