@@ -24,7 +24,10 @@ $GLOBALS['TL_LANG']['tl_module']['sortingDirection3']   			= array('Sortierreihe
 $GLOBALS['TL_LANG']['tl_module']['avatarSizeListing']   			= array('Avatargrösse (Benutzerauflistung)', 'Legen Sie hier die Grösse des Avatars fest.');
 $GLOBALS['TL_LANG']['tl_module']['avatarSizeProfile']   			= array('Avatargrösse (Profilansicht)', 'Legen Sie hier die Grösse des Avatars fest.');
 $GLOBALS['TL_LANG']['tl_module']['memberRatingListTemplate']   		= array('Template', 'Legen Sie hier fest, welches Template genutzt werden soll.');
-$GLOBALS['TL_LANG']['tl_module']['memberRatingDetailTemplate']   	= array('Template', 'Legen Sie hier fest, welches Template genutzt werden soll.');
+$GLOBALS['TL_LANG']['tl_module']['memberRatingDetailTemplate']   	       = array('Template', 'Legen Sie hier fest, welches Template genutzt werden soll.');
+$GLOBALS['TL_LANG']['tl_module']['memberRatingLoggedInUsersProfileTemplate'] = array('Template', 'Legen Sie hier fest, welches Template genutzt werden soll.');
+
+
 
 // Legends
 $GLOBALS['TL_LANG']['tl_module']['avatar'] 							= 'Avatar';

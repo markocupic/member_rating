@@ -46,7 +46,7 @@ abstract class MemberRating extends \Module
 	public function __construct($objModule, $strColumn = 'main')
 	{
 		define('MOD_MEMBER_RATING', 'true');
-		require TL_ROOT . '/system/modules/member_rating/helper/functions.php';
+		require_once TL_ROOT . '/system/modules/member_rating/helper/functions.php';
 
 		// set the item from the auto_item parameter
 		if($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
@@ -65,6 +65,72 @@ abstract class MemberRating extends \Module
 		$this->setImageDir();
 
 		return parent::__construct($objModule, $strColumn);
+	}
+
+
+	/**
+	 * @return string|void
+	 */
+	public function generate()
+	{
+		$this->loadDataContainer('tl_comments');
+		$this->loadDataContainer('tl_member');
+		$this->loadLanguageFile('tl_comments');
+		$this->loadLanguageFile('tl_member');
+
+		// handle Ajax requests
+		if(\Input::get('isAjaxRequest'))
+		{
+			$this->handleAjax();
+			exit();
+		}
+
+		return parent::generate();
+	}
+
+
+	/**
+	 *
+	 */
+	public function addTemplateVars()
+	{
+		// MSC
+		$this->Template->loggedInUser = $this->loggedInUser;
+
+		// closures
+		$this->Template->getImageDir = function ()
+		{
+			return TL_FILES_URL . MemberRating::getImageDir();
+		};
+		$this->Template->getSocialmediaIcon = function ($strHref)
+		{
+			return MemberRating::getSocialmediaIcon($strHref);
+		};
+
+		// add javascript language-file-object to template
+		$strLang = "objLang = {";
+		$strLang .= "imgDir: '" . $this->getImageDir() . "',";
+		foreach($GLOBALS['TL_LANG']['MOD']['member_rating'] as $k => $v)
+		{
+			if(is_array($v))
+			{
+				$strLang .= $k . ": {";
+				foreach($v as $kk => $vv)
+				{
+					$strLang .= $kk . ": '" . $vv . "',";
+				}
+				$strLang .= "},";
+			}
+			else
+			{
+				$strLang .= $k . ": '" . $v . "',";
+			}
+		}
+		$strLang .= "};";
+		$this->Template->JsLanguageObject = str_replace(',}', '}', $strLang) . "\r\n";
+		$this->Template->JsVarsObject = "ModuleVars = {REQUEST_TOKEN: '" . REQUEST_TOKEN . "'};" . "\r\n";
+
+
 	}
 
 
@@ -117,6 +183,50 @@ abstract class MemberRating extends \Module
 
 
 	/**
+	 * handle ajax requests
+	 */
+	protected function handleAjax()
+	{
+		// delete socialmedia links
+		if(\Input::get('act') == 'delSocialMediaLink' && \Input::post('type'))
+		{
+			if(FE_USER_LOGGED_IN)
+			{
+				$arrSocialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
+				if(array_search(\Input::post('type'), $arrSocialmediaLinks) !== false)
+				{
+					$key = array_search(\Input::post('type'), $arrSocialmediaLinks);
+					unset($arrSocialmediaLinks[$key]);
+				}
+				$this->loggedInUser->socialmediaLinks = serialize(array_values($arrSocialmediaLinks));
+				$this->loggedInUser->save();
+			}
+		}
+
+		// toggle visibility (publish or unpublish)
+		if(\Input::get('act') == 'toggleVisibility' && \Input::get('id'))
+		{
+			if(FE_USER_LOGGED_IN)
+			{
+				$objComment = \CommentsModel::findByPk(\Input::get('id'));
+				if($objComment !== NULL)
+				{
+					if($this->loggedInUser->id == $objComment->parent)
+					{
+						$isPublished = $objComment->published ? 0 : 1;
+						$objComment->published = $isPublished;
+						$objComment->save();
+						$strReturn = $isPublished == 0 ? 'invisible' : 'visible';
+						echo $strReturn;
+					}
+				}
+			}
+		}
+		exit;
+	}
+
+
+	/**
 	 * get score of a member
 	 *
 	 * @param $id
@@ -125,9 +235,8 @@ abstract class MemberRating extends \Module
 	public static function getScore($id)
 	{
 		$objPoints = \Database::getInstance()
-							  ->prepare("SELECT SUM(score) as sumscore FROM tl_comments WHERE source = ? AND parent = ?")
-							  ->execute('tl_member',
-								  $id);
+							  ->prepare("SELECT SUM(score) as sumscore FROM tl_comments WHERE source = ? AND parent = ? AND owner > ?")
+							  ->execute('tl_member', $id, 0);
 		$score = $objPoints->sumscore <= 0 ? '0' : $objPoints->sumscore;
 		return $score;
 	}

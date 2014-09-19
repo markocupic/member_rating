@@ -26,9 +26,10 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Modules
-	'MCupic\MemberRating\MemberRatingList'   => 'system/modules/member_rating/modules/MemberRatingList.php',
-	'MCupic\MemberRating\MemberRatingDetail' => 'system/modules/member_rating/modules/MemberRatingDetail.php',
-	'MCupic\MemberRating\MemberRating'       => 'system/modules/member_rating/modules/MemberRating.php',
+	'MCupic\MemberRating\MemberRatingLoggedInUsersProfile' => 'system/modules/member_rating/modules/MemberRatingLoggedInUsersProfile.php',
+	'MCupic\MemberRating\MemberRatingList'                 => 'system/modules/member_rating/modules/MemberRatingList.php',
+	'MCupic\MemberRating\MemberRatingDetail'               => 'system/modules/member_rating/modules/MemberRatingDetail.php',
+	'MCupic\MemberRating\MemberRating'                     => 'system/modules/member_rating/modules/MemberRating.php',
 ));
 
 
@@ -37,7 +38,8 @@ ClassLoader::addClasses(array
  */
 TemplateLoader::addFiles(array
 (
-	'mod_member_rating_list'           => 'system/modules/member_rating/templates',
-	'member_rating_email_notification' => 'system/modules/member_rating/templates',
-	'mod_member_rating_detail'         => 'system/modules/member_rating/templates',
+	'mod_member_rating_list'                    => 'system/modules/member_rating/templates',
+	'mod_member_rating_logged_in_users_profile' => 'system/modules/member_rating/templates',
+	'member_rating_email_notification'          => 'system/modules/member_rating/templates',
+	'mod_member_rating_detail'                  => 'system/modules/member_rating/templates',
 ));

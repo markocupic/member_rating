@@ -1,7 +1,7 @@
 <?php $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/member_rating/assets/js/member_rating.js'; ?>
 <?php $GLOBALS['TL_CSS'][] = 'system/modules/member_rating/assets/css/member_rating.css'; ?>
 
-<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+<div class="<?php echo $this->class; ?> member_rating block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
 
     <?php if ($this->headline): ?>
         <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
@@ -9,7 +9,7 @@
 
 
     <?php if($this->rows): ?>
-        <div id="ratedMemberListing">
+        <div class="ratedMemberListing">
             <?php foreach($this->rows as $member): ?>
                 <div class="comment">
                     <div class="col_1">

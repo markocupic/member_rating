@@ -3,18 +3,11 @@
  */
 window.addEvent('domready', function () {
 
+    if ($$('.socialmediaSection')) {
+        $$('.socialmediaSection .image_container').each(function (imgContainer) {
 
-    $$('#socialmediaLinks .image_container').each(function (imgContainer) {
-        var deleteIcon = new Element('img');
-        deleteIcon.setProperties({
-            src: 'system/modules/member_rating/assets/images/cancel-circle.png',
-            alt: objLang.remove_link,
-            title: objLang.remove_link
-        });
-
-        if ((deleteIcon = imgContainer.getElements('.removeSocialmediaIcon')[0])) {
-            deleteIcon.inject(imgContainer, 'bottom');
             var smLink = imgContainer.getElements('a.socialmediaLink')[0];
+            var deleteIcon = imgContainer.getElements('.removeSocialmediaIcon');
 
             // ajax request: delete socialmedia link
             deleteIcon.addEvent('click', function () {
@@ -33,20 +26,20 @@ window.addEvent('domready', function () {
                 }
                 xhr.send(data);
             });
-        }
+        });
+    }
 
-    });
 
 
-    var ratingValue = 0;
-    $$('#starbox img.star').each(function (el) {
-        ratingValue++;
-        el.setProperty('onclick', 'rate(this,' + ratingValue + ')');
-    });
+    if ($$('.starbox')) {
+        var ratingValue = 0;
+        $$('.starbox img.star').each(function (el) {
+            ratingValue++;
+            el.setProperty('onclick', 'rate(this,' + ratingValue + ')');
+        });
 
-    // inject hidden-field to bottom
-    if (document.id('starbox')) {
-        var form = document.id('starbox').getParent('form');
+        // inject hidden-field to bottom
+        var form = $$('.starbox')[0].getParent('form');
         form.setProperty('onsubmit', 'if(!checkForm(this))return false;');
     }
 });
@@ -63,7 +56,7 @@ function checkForm(form) {
 
 function rate(el, value) {
     document.id('ctrl_score').value = value;
-    $$('#starbox img.star').each(function (star) {
+    $$('.starbox img.star').each(function (star) {
         star.removeClass('selected');
     });
     // add class to active star
@@ -74,18 +67,18 @@ function rate(el, value) {
 
     if (value > 0) {
         var i = 0;
-        $$('#starbox img.star').each(function (star) {
+        $$('.starbox img.star').each(function (star) {
             i++;
             if (i == 0) {
                 i = 1;
             }
             if (i == value || i < value) {
                 //blue
-                star.src = 'system/modules/member_rating/assets/images/starrating/star_1.jpg';
+                star.src = objLang.imgDir + '/starrating/star_1.jpg';
             }
             else if (i > value) {
                 //grey
-                star.src = 'system/modules/member_rating/assets/images/starrating/star_2.jpg';
+                star.src = objLang.imgDir + '/starrating/star_2.jpg';
             } else {
                 //
             }
@@ -103,7 +96,7 @@ function toggleVisibility(el, commentId) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             if (xhr.responseText != '') {
-                el.setAttribute('src', 'system/modules/member_rating/assets/images/' + xhr.responseText + '.png');
+                el.setAttribute('src', objLang.imgDir + '/' + xhr.responseText + '.png');
             }
         }
     }

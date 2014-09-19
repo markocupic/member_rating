@@ -24,6 +24,17 @@ class MemberRatingList extends MemberRating
 
 
 	/**
+	 * @param object $objModule
+	 * @param string $strColumn
+	 */
+	public function __construct($objModule, $strColumn = 'main')
+	{
+
+		return parent::__construct($objModule, $strColumn);
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public function generate()
@@ -55,6 +66,9 @@ class MemberRatingList extends MemberRating
 	 */
 	protected function compile()
 	{
+		// add miscellaneous vars to the template
+		$this->addTemplateVars();
+
 		// get href for the detail-page
 		$objDetailPage = \PageModel::findWithDetails($this->detailPage);
 		if($objDetailPage === NULL)

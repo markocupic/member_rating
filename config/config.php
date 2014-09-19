@@ -21,6 +21,7 @@ array_insert($GLOBALS['FE_MOD'], 2, array(
        'module_type_member_rating' => array(
               'member_rating_detail' => 'MemberRating\\MemberRatingDetail',
               'member_rating_list' => 'MemberRating\\MemberRatingList',
+              'member_rating_logged_in_users_profile' => 'MemberRating\\MemberRatingLoggedInUsersProfile',
        )
 ));
 

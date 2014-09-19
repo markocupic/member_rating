@@ -1,64 +1,14 @@
 <?php $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/member_rating/assets/js/member_rating.js'; ?>
 <?php $GLOBALS['TL_CSS'][] = 'system/modules/member_rating/assets/css/member_rating.css'; ?>
 
-<div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+<div class="<?php echo $this->class; ?> member_rating block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
 
     <?php if ($this->headline): ?>
         <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
     <?php endif; ?>
 
-    <?php if(FE_USER_LOGGED_IN): ?>
-    <!-- avatar & user profile of logged in member -->
-    <div id="loggedInUserProfile">
-            <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
-            <div class="avatar">
-                <div class="image_container">
-                    <?php echo $this->loggedInUser->avatar; ?>
-                    <?php if($this->loggedInUser->gradeIcon): ?>
-                        <?php echo $this->loggedInUser->gradeIcon; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div id="gradeBox">
-                <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
-                <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
-            </div>
-        </div>
-        <!-- socialmedia icons -->
-        <?php if($this->loggedInUser->socialmediaLinks): ?>
-            <div id="socialmediaLinks">
-            <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
-                <div class="image_container">
-                    <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
-                        <?php echo $this->getSocialmediaIcon($href); ?>
-                    </a>
-                    <img src="<?php echo $this->deleteSocialmediaLinkIcon; ?>" alt="delete_link" title="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['remove_link']; ?>" class="removeSocialmediaIcon">
-                </div>
-            <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-        <!-- socialmedia links form -->
-        <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->socialMediaFormId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
-
-        <div class="formbody">
-            <input type="hidden" name="FORM_SUBMIT" value="<?php echo $this->socialMediaFormId; ?>">
-            <input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
-
-            <div class="fields">
-                <?php echo $this->socialMediaTextField; ?>
-            </div>
-
-            <div class="submit_container">
-                <input type="submit" class="submit" value="<?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['add']; ?>">
-            </div>
-        </div>
-        </form>
-    <?php endif; ?>
-
-
     <!-- avatar & profile of selected user -->
-    <div id="ratedUserProfile">
+    <div class="ratedUserProfile">
         <h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
         <div class="avatar">
             <div class="image_container">
@@ -69,13 +19,13 @@
             </div>
         </div>
 
-        <div id="gradeBox">
+        <div class="gradeBox">
             <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
             <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
         </div>
         <!-- socialmedia icons -->
         <?php if($this->ratedUser->socialmediaLinks): ?>
-        <div id="socialmediaLinks">
+        <div class="socialmediaSection">
             <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
             <div class="image_container">
                 <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
@@ -91,7 +41,7 @@
     <!-- top3 list -->
     <?php if($this->ratedUser->top3): ?>
         <h2>Top 3</h2>
-        <div id="top3">
+        <div class="top3">
             <?php foreach($this->ratedUser->top3 as $comment): ?>
                 <div class="row">
                     <div class="col_0">
@@ -117,7 +67,7 @@
 
     <!-- all ratings -->
     <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['all_ratings']; ?></h2>
-    <div id="allRatings">
+    <div class="allRatings">
         <?php if($this->ratedUser->allRatings): ?>
                 <div class="notempty<?php echo ($this->ratedUser->id != $this->loggedInUser->id) ?: ' myprofile'; ?>">
                     <?php foreach($this->ratedUser->allRatings as $comment): ?>
@@ -161,7 +111,7 @@
                 </p>
             </div>
         <?php else: ?>
-                <div id="yourRating">
+                <div class="voting">
                     <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['your_rating']; ?></h2>
 
                     <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->formId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
@@ -171,9 +121,9 @@
 
                             <div class="fields">
                                 <!-- starbox -->
-                                <div id="starbox">
+                                <div class="starbox">
                                 <?php for($i=1;$i<6;$i++): ?>
-                                    <img id="star_<?php echo $i; ?>" class="star" src="<?php echo $this->getImageDir(); ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
+                                    <img class="star" src="<?php echo $this->getImageDir(); ?>/starrating/star_2.jpg" title="+<?php echo $i; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['no_rating_available']; ?>">
                                 <?php endfor; ?>
                                 </div>
                                 <?php echo $this->fields; ?>

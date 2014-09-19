@@ -1,88 +1,99 @@
-/* list view*/
-/* list view*/
-/* list view*/
-.mod_member_rating_list .comment {
+/* mod_member_rating_list */
+/* mod_member_rating_list */
+/* mod_member_rating_list */
+.member_rating .mod_member_rating_list .comment {
 	position: relative;
 }
 
-.mod_member_rating_list .col_1 {
+.member_rating .mod_member_rating_list .col_1 {
 	position: absolute;
 	left: 0;
 }
 
-.mod_member_rating_list .col_2 {
+.member_rating .mod_member_rating_list .col_2 {
 	left: 80px;
 	top: 0;
 	position: relative;
 	min-height: 80px;
 }
 
-/* detail view*/
-/* detail view*/
-/* detail view*/
-/* my avatar */
-.mod_member_rating_detail .avatar .image_container img {
+
+/* mod_member_rating_logged_in_users_profile */
+/* mod_member_rating_logged_in_users_profile */
+/* mod_member_rating_logged_in_users_profile */
+
+/* socialmedia links */
+.member_rating .socialmediaSection .image_container {
+    display: inline;
+    margin-right: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.member_rating .socialmediaSection  .removeSocialmediaIcon {
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    z-index: 2;
+}
+
+/* avatar */
+.member_rating .loggedInUserProfile .avatar .image_container img,
+.member_rating .ratedUserProfile .avatar .image_container img{
 	display: inline;
 }
 
-.mod_member_rating_detail .avatar .image_container {
+.member_rating .loggedInUserProfile .avatar .image_container,
+.member_rating .ratedUserProfile .avatar .image_container{
 	border: 1px solid gray;
 	width: auto;
 	display: inline-block;
 	position: relative;
 }
 
-.mod_member_rating_detail .avatar .gradeIcon {
+.member_rating .loggedInUserProfile .avatar .gradeIcon,
+.member_rating .ratedUserProfile .avatar .gradeIcon{
 	position: absolute;
 	top: -4px;
 	right: -20px;
 }
 
-/* socialmedia links */
-.mod_member_rating_detail #socialmediaLinks .image_container {
-	display: inline;
-	margin-right: 10px;
-	position: relative;
-	z-index: 1;
 
-}
 
-.mod_member_rating_detail #socialmediaLinks .removeSocialmediaIcon {
-	position: absolute;
-	right: -5px;
-	bottom: -5px;
-	z-index: 2;
-}
+
+/* mod_member_rating_detail */
+/* mod_member_rating_detail */
+/* mod_member_rating_detail */
 
 /* comments */
-.mod_member_rating_detail .row {
+.member_rating  .row {
 	position: relative;
 }
 
 /* top3*/
-.mod_member_rating_detail #top3 .col_1 {
+.member_rating  .top3 .col_1 {
 	position: absolute;
 	left: 0;
 }
 
-.mod_member_rating_detail #top3 .col_2 {
+.member_rating  .top3 .col_2 {
 	position: relative;
 	min-height: 80px;
 	top: 0;
 }
 
 /* top3 */
-.mod_member_rating_detail #top3 .row {
+.member_rating  .top3 .row {
 	position: relative;
 }
 
-.mod_member_rating_detail #top3 .col_0 {
+.member_rating  .top3 .col_0 {
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-.mod_member_rating_detail #top3 .col_1 {
+.member_rating  .top3 .col_1 {
 	position: relative;
 	top: 0;
 	left: 50px;
@@ -90,21 +101,21 @@
 }
 
 /* all ratings */
-.mod_member_rating_detail #allRatings .row {
+.member_rating  .allRatings .row {
 	position: relative;
 }
 
-.mod_member_rating_detail #allRatings .col_0 {
+.member_rating .allRatings .col_0 {
 	display: none;
 }
 
-.mod_member_rating_detail #allRatings .col_1 {
+.member_rating  .allRatings .col_1 {
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-.mod_member_rating_detail #allRatings .col_2 {
+.member_rating .allRatings .col_2 {
 	position: relative;
 	top: 0;
 	left: 50px;
@@ -112,20 +123,20 @@
 }
 
 /* only display visibility icon to comment-owner*/
-.mod_member_rating_detail #allRatings .myprofile .col_0 {
+.member_rating .allRatings .myprofile .col_0 {
 	display: block;
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-.mod_member_rating_detail #allRatings .myprofile .col_1 {
+.member_rating  .allRatings .myprofile .col_1 {
 	position: absolute;
 	top: 0;
 	left: 50px;
 }
 
-.mod_member_rating_detail #allRatings .myprofile .col_2 {
+.member_rating  .allRatings .myprofile .col_2 {
 	position: relative;
 	top: 0;
 	left: 140px;
@@ -133,7 +144,7 @@
 }
 
 /*starbox*/
-.mod_member_rating_detail #starbox {
+.member_rating .starbox {
 	display: inline;
 }
 

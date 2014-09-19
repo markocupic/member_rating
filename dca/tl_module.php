@@ -23,6 +23,7 @@ Controller::loadLanguageFile('tl_member');
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'notifyRatedUser';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_list'] = '{title_legend},name,headline,type;{sortOptions::hide},sortingField1,sortingDirection1,sortingField2,sortingDirection2,sortingField3,sortingDirection3;{detailPage:hide},detailPage;{avatar:hide},avatarSizeListing;{template_legend:hide},memberRatingListTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_detail'] = '{title_legend},name,headline,type,blockingTime;{jumpTo_legend:hide},jumpTo;{notify:hide},notifyRatedUser;{avatar:hide},avatarSizeProfile,avatarSizeListing;{template_legend:hide},memberRatingDetailTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_logged_in_users_profile'] = '{title_legend},name,headline,type;{avatar:hide},avatarSizeProfile;{template_legend:hide},memberRatingLoggedInUsersProfileTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['notifyRatedUser'] = 'emailNotifyPage_ActivateComment,emailNotifyPage_DeleteComment';
 
 // fields
@@ -76,6 +77,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['blockingTime'] = array
 	'eval'      => array('fieldType' => 'radio','tl_class' => 'clr'),
 	'sql'       => "int(10) unsigned NOT NULL default '0'",
 );
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingField1'] = array
 (
 	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingField1'],
@@ -187,6 +189,17 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingDetailTemplate'] = array
 	'sql'                     => "varchar(64) NOT NULL default ''"
 );
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingLoggedInUsersProfileTemplate'] = array
+(
+       'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingLoggedInUsersProfileTemplate'],
+       'exclude'                 => true,
+       'inputType'               => 'select',
+       'options_callback'        => array('tl_member_rating', 'getLoggedInUsersProfileTemplates'),
+       'sql'                     => "varchar(64) NOT NULL default ''"
+);
+
+
+
 /**
  * Class tl_member_rating
  *
@@ -218,4 +231,17 @@ class tl_member_rating extends Backend
 	{
 		return $this->getTemplateGroup('mod_member_rating_detail');
 	}
+
+
+       /**
+        * Return templates as array
+        *
+        * @return array
+        */
+       public function getLoggedInUsersProfileTemplates()
+       {
+              return $this->getTemplateGroup('mod_member_rating_logged_in_users_profile');
+       }
+
+
 }

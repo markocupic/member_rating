@@ -11,4 +11,5 @@
 $GLOBALS['TL_LANG']['FMD']['module_type_member_rating'] = "Member Rating";
 
 $GLOBALS['TL_LANG']['FMD']['member_rating_list'] = array("Member Rating (Listenansicht)","Listet alle Mitglieder auf, die gerated werden können.");
-$GLOBALS['TL_LANG']['FMD']['member_rating_detail'] = array("Member Rating (Detailansicht)","Stellt ein Formular bereit, um das ausgewählte Mitglied zu bewerten");
+$GLOBALS['TL_LANG']['FMD']['member_rating_detail'] = array("Member Rating (Detailansicht)","Stellt ein Formular bereit, um das ausgewählte Mitglied zu bewerten.");
+$GLOBALS['TL_LANG']['FMD']['member_rating_logged_in_users_profile'] = array("Member Rating (Benutzerprofil des angemeldeten Mitglieds)","Stellt das Benutzerprofil des angemeldeten Mitglieds bereit.");

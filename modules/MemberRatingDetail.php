@@ -15,13 +15,22 @@ namespace MCupic\MemberRating;
 class MemberRatingDetail extends MemberRating
 {
 
-
 	/**
 	 * Template
 	 *
 	 * @var string
 	 */
 	protected $strTemplate = 'mod_member_rating_detail';
+
+
+	/**
+	 * @param object $objModule
+	 * @param string $strColumn
+	 */
+	public function __construct($objModule, $strColumn = 'main')
+	{
+		return parent::__construct($objModule, $strColumn);
+	}
 
 
 	/**
@@ -73,36 +82,8 @@ class MemberRatingDetail extends MemberRating
 	 */
 	protected function compile()
 	{
-
-		$this->loadDataContainer('tl_comments');
-		$this->loadDataContainer('tl_member');
-		$this->loadLanguageFile('tl_comments');
-		$this->loadLanguageFile('tl_member');
-
-		// handle Ajax requests
-		if(\Input::get('isAjaxRequest'))
-		{
-			$this->handleAjax();
-			exit();
-		}
-
-		if(FE_USER_LOGGED_IN)
-		{
-
-			// ***** LOGGED USER PROFILE *****
-			// get avatar of logged in user
-			$arrSize = deserialize($this->avatarSizeProfile);
-			$title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;
-			$this->loggedInUser->avatar = $this->getAvatar($this->loggedInUser->id, $arrSize, 'avatar', $title, 'avatar_large', $this);
-
-			// socialmedia links
-			$this->getSocialmediaLinks($this->loggedInUser->id);
-
-			// get score and grade of logged user
-			$this->loggedInUser->score = $this->getScore($this->loggedInUser->id);
-			$this->loggedInUser->gradeLabel = $this->getGrade($this->loggedInUser->id, 'label');
-			$this->loggedInUser->gradeIcon = $this->getGrade($this->loggedInUser->id, 'icon');
-		}
+		// add miscellaneous vars to the template
+		$this->addTemplateVars();
 
 		// ***** RATED USER PROFILE *****
 		// get avatar of logged in user
@@ -119,9 +100,8 @@ class MemberRatingDetail extends MemberRating
 		$this->ratedUser->gradeLabel = $this->getGrade($this->ratedUser->id, 'label');
 		$this->ratedUser->gradeIcon = $this->getGrade($this->ratedUser->id, 'icon');
 
-
 		// ***** TOP 3 SECTION *****
-		$objRatings = $this->Database->prepare("SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = ? ORDER BY score DESC, dateOfCreation DESC")
+		$objRatings = $this->Database->prepare("SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = ? AND owner > 0 ORDER BY score DESC, dateOfCreation DESC")
 									 ->limit(3)->execute('tl_member', $this->ratedUser->id, 1);
 		$arrTop3 = array();
 		while($row = $objRatings->fetchAssoc())
@@ -145,11 +125,11 @@ class MemberRatingDetail extends MemberRating
 		// ***** ALL RATINGS SECTION *****
 		if($this->ratedUser->id == $this->loggedInUser->id)
 		{
-			$strSql = "SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? ORDER BY dateOfCreation DESC, score DESC";
+			$strSql = "SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND owner > 0 ORDER BY dateOfCreation DESC, score DESC";
 		}
 		else
 		{
-			$strSql = "SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = '1' ORDER BY dateOfCreation DESC, score DESC";
+			$strSql = "SELECT * FROM tl_comments WHERE comment != '' AND source = ? AND parent = ? AND published = '1' AND owner > 0 ORDER BY dateOfCreation DESC, score DESC";
 		}
 		$objRatings = $this->Database->prepare($strSql)->execute('tl_member', $this->ratedUser->id);
 		$arrAllRatings = array();
@@ -171,57 +151,19 @@ class MemberRatingDetail extends MemberRating
 			}
 			$arrAllRatings[] = $row;
 		}
+
 		$this->ratedUser->allRatings = count($arrAllRatings) ? $arrAllRatings : false;
-
-
-		// MSC
-		$this->Template->loggedInUser = $this->loggedInUser;
 		$this->Template->ratedUser = $this->ratedUser;
 
-
-		// closures
-		$this->Template->getImageDir = function ()
-		{
-			return TL_FILES_URL . MemberRating::getImageDir();
-		};
-		$this->Template->getSocialmediaIcon = function ($strHref)
-		{
-			return MemberRating::getSocialmediaIcon($strHref);
-		};
-
-
-		// add javascript language-file-object to template
-		$strLang = "objLang = {";
-		foreach($GLOBALS['TL_LANG']['MOD']['member_rating'] as $k => $v)
-		{
-			if(is_array($v))
-			{
-				$strLang .= $k . ": {";
-				foreach($v as $kk => $vv)
-				{
-					$strLang .= $kk . ": '" . $vv . "',";
-				}
-				$strLang .= "},";
-			}
-			else
-			{
-				$strLang .= $k . ": '" . $v . "',";
-			}
-		}
-		$strLang .= "};";
-		$this->Template->JsLanguageObject = str_replace(',}', '}', $strLang) . "\r\n";
-		$this->Template->JsVarsObject = "ModuleVars = {REQUEST_TOKEN: '" . REQUEST_TOKEN . "'};" . "\r\n";
 
 		// generate forms
 		if(FE_USER_LOGGED_IN)
 		{
-			$this->generateSocialMediaLinksForm();
 			if($this->loggedInUser->id != $this->ratedUser->id)
 			{
 				$this->generateVotingForm();
 			}
 		}
-
 	}
 
 
@@ -341,87 +283,7 @@ class MemberRatingDetail extends MemberRating
 		$this->Template->slabel = specialchars($GLOBALS['TL_LANG']['MSC']['saveData']);
 		$this->Template->fields = $strFields;
 		$this->Template->arrFields = $arrFields;
-	}
 
-
-	/**
-	 * handle ajax requests
-	 */
-	protected function handleAjax()
-	{
-		// delete socialmedia links
-		if(\Input::get('act') == 'delSocialMediaLink' && \Input::post('type'))
-		{
-			if(FE_USER_LOGGED_IN)
-			{
-				$arrSocialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
-				if(array_search(\Input::post('type'), $arrSocialmediaLinks) !== false)
-				{
-					$key = array_search(\Input::post('type'), $arrSocialmediaLinks);
-					unset($arrSocialmediaLinks[$key]);
-				}
-				$this->loggedInUser->socialmediaLinks = serialize(array_values($arrSocialmediaLinks));
-				$this->loggedInUser->save();
-			}
-		}
-
-		// toggle visibility (publish or unpublish)
-		if(\Input::get('act') == 'toggleVisibility' && \Input::get('id'))
-		{
-			if(FE_USER_LOGGED_IN)
-			{
-				$objComment = \CommentsModel::findByPk(\Input::get('id'));
-				if($objComment !== NULL)
-				{
-					if($this->loggedInUser->id == $objComment->parent)
-					{
-						$isPublished = $objComment->published ? 0 : 1;
-						$objComment->published = $isPublished;
-						$objComment->save();
-						$strReturn = $isPublished == 0 ? 'invisible' : 'visible';
-						echo $strReturn;
-					}
-				}
-			}
-		}
-		exit;
-	}
-
-
-	/**
-	 * generate socialmedia-links textfield
-	 */
-	protected function generateSocialMediaLinksForm()
-	{
-		$this->Template->socialMediaFormId = 'tl_member_' . $this->id;
-
-		$arrData = &$GLOBALS['TL_DCA']['tl_member']['fields']['socialmediaLinks'];
-		$field = 'socialmediaLinks';
-		$strClass = $GLOBALS['TL_FFL'][$arrData['inputType']];
-		$arrData['eval']['tableless'] = 'true';
-		$arrData['label'] = 'Socialmedia Links hinzufügen';
-		$varValue = 'http://';
-		$objWidget = new $strClass($strClass::getAttributesFromDca($arrData, $field, $varValue, '', '', $this));
-		$objWidget->storeValues = true;
-		if(FE_USER_LOGGED_IN && \Input::post('FORM_SUBMIT') == 'tl_member_' . $this->id)
-		{
-			$objMember = \MemberModel::findByPk($this->loggedInUser->id);
-			if($objMember !== NULL)
-			{
-				$arrSocialMediaLinks = deserialize($objMember->socialmediaLinks);
-				$this->Template->loggedInUser->socialmediaLinks = $arrSocialMediaLinks;
-				$objWidget->validate();
-				if(!$objWidget->hasErrors() && trim(\Input::post('socialmediaLinks')) != '')
-				{
-					$value = \Input::post('socialmediaLinks');
-					$arrSocialMediaLinks[] = $value;
-					$objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
-					$objMember->save();
-					$this->reload();
-				}
-			}
-		}
-		$this->Template->socialMediaTextField = $objWidget->parse();
 		// shit storm protection
 		if($this->blockingTime > 0)
 		{
