@@ -135,7 +135,7 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
                             $objWidget->validate();
                             if (!$objWidget->hasErrors() && trim(\Input::post('socialmediaLinks')) != '')
                             {
-                                   $value = \Input::post('socialmediaLinks');
+                                   $value = strtolower(\Input::post('socialmediaLinks'));
                                    // validate Link (check for a valid socialmedia Server)
                                    $doNotSubmit = true;
                                    if (trim($GLOBALS['TL_CONFIG']['socialmediaLinks']) != '')
@@ -148,7 +148,7 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
                                                         if (count($arrSMBrand) == 2)
                                                         {
                                                                $strServer = $arrSMBrand[0];
-                                                               if (strpos($value, $strServer) !== false)
+                                                               if (strpos($value, strtolower($strServer)) !== false)
                                                                {
                                                                       $doNotSubmit = false;
                                                                }
