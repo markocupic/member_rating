@@ -146,6 +146,7 @@ function _getParents(o, tag) {
     }
     return null;
 }
+
 /**
  * remove node mootools destroy() equivalent
  * @param elNode
