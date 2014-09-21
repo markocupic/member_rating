@@ -32,6 +32,7 @@ $GLOBALS['TL_LANG']['MOD']['member_rating']['add'] = 'Hinzufügen';
 
 // errors
 $GLOBALS['TL_LANG']['MOD']['member_rating']['err_add_score_between'] = 'Bitte vergeben Sie über das starvoting eine Punktezahl zwischen';
+$GLOBALS['TL_LANG']['MOD']['member_rating']['invalidSocialmediaLink'] = 'Bitte geben Sie einen gültigen Socialmedia Link ein.';
 
 
 // email

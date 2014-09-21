@@ -22,7 +22,6 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
         */
        protected $strTemplate = 'mod_member_rating_logged_in_users_profile';
 
-
        /**
         * @return string
         */
@@ -58,14 +57,14 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
               return parent::generate();
        }
 
-
        /**
         * Generate the module
         */
        protected function compile()
        {
+
               // handle Ajax requests
-              if(\Input::get('isAjaxRequest') && \Input::get('act') == 'delSocialmediaLink' )
+              if (\Input::get('isAjaxRequest') && \Input::get('act') == 'delSocialmediaLink')
               {
                      $this->handleAjax();
                      exit();
@@ -93,14 +92,8 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
 
                      // add data to template
                      $keys = array(
-                            'firstname',
-                            'lastname',
-                            'avatar',
-                            'socialmediaLinks',
-                            'deleteSocialmediaLinkIcon',
-                            'score',
-                            'gradeLabel',
-                            'gradeIcon',
+                            'firstname', 'lastname', 'avatar', 'socialmediaLinks', 'deleteSocialmediaLinkIcon', 'score',
+                            'gradeLabel', 'gradeIcon',
                      );
                      foreach ($keys as $key)
                      {
@@ -115,7 +108,6 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
               }
 
        }
-
 
        /**
         * generate socialmedia-links textfield
@@ -136,7 +128,7 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
               if (FE_USER_LOGGED_IN && \Input::post('FORM_SUBMIT') == 'tl_member_' . $this->id)
               {
                      $objMember = \MemberModel::findByPk($this->loggedInUser->id);
-                     if ($objMember !== NULL)
+                     if ($objMember !== null)
                      {
                             $arrSocialMediaLinks = deserialize($objMember->socialmediaLinks);
                             $this->Template->loggedInUser->socialmediaLinks = $arrSocialMediaLinks;
@@ -144,10 +136,38 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
                             if (!$objWidget->hasErrors() && trim(\Input::post('socialmediaLinks')) != '')
                             {
                                    $value = \Input::post('socialmediaLinks');
-                                   $arrSocialMediaLinks[] = $value;
-                                   $objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
-                                   $objMember->save();
-                                   $this->reload();
+                                   // validate Link (check for a valid socialmedia Server)
+                                   $doNotSubmit = true;
+                                   if (trim($GLOBALS['TL_CONFIG']['socialmediaLinks']) != '')
+                                   {
+                                          foreach (explode('***', trim($GLOBALS['TL_CONFIG']['socialmediaLinks'])) as $item)
+                                          {
+                                                 $arrSMBrand = explode('|', $item);
+                                                 if (is_array($arrSMBrand))
+                                                 {
+                                                        if (count($arrSMBrand) == 2)
+                                                        {
+                                                               $strServer = $arrSMBrand[0];
+                                                               if (strpos($value, $strServer) !== false)
+                                                               {
+                                                                      $doNotSubmit = false;
+                                                               }
+                                                        }
+                                                 }
+                                          }
+                                   }
+                                   if ($doNotSubmit)
+                                   {
+                                          $objWidget->hasErrors();
+                                          $objWidget->addError($GLOBALS['TL_LANG']['MOD']['member_rating']['invalidSocialmediaLink']);
+                                   }
+                                   else
+                                   {
+                                          $arrSocialMediaLinks[] = $value;
+                                          $objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
+                                          $objMember->save();
+                                          $this->reload();
+                                   }
                             }
                      }
               }
