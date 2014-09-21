@@ -10,7 +10,6 @@
     <?php if(FE_USER_LOGGED_IN): ?>
     <!-- avatar & user profile of logged in member -->
     <div class="loggedInUserProfile">
-            <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
             <div class="avatar">
                 <div class="image_container">
                     <?php echo $this->avatar; ?>
@@ -58,7 +57,7 @@
 
     <script>
         <?php echo $this->JsLanguageObject; ?>
-        <?php echo $this->JsVarsObject; ?>
+        <?php echo $this->JsModuleObject; ?>
     </script>
 
 </div>

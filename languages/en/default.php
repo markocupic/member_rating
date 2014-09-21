@@ -23,7 +23,6 @@ $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by'] = 'Kommentar von';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['your_rating'] = 'Deine Wertung';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked'] = array('Formular gesperrt', 'Sie haben erst vor kurzem bei diesem Mitglied eine Bewertung abgegeben.');
 $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_form_locked_time'] = 'Eine weitere Bewertung ist erst wieder in %s möglich.';
-$GLOBALS['TL_LANG']['MOD']['member_rating']['me'] = 'Ich';
 $GLOBALS['TL_LANG']['MOD']['member_rating']['publish_or_unpublish'] = 'aktivieren/deaktivieren';
 
 

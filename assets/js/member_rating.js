@@ -1,16 +1,31 @@
 /**
- * Created by Marko on 04.09.14.
+ * Contao Open Source CMS
+ * Copyright (C) 2005-2014 Leo Feyer
+ *
+ * @package member_rating
+ * @author Marko Cupic 2014
+ * @link    http://www.contao.org
+ * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ * @link https://github.com/markocupic/member_rating
  */
-window.addEvent('domready', function () {
 
-    if ($$('.socialmediaSection')) {
-        $$('.socialmediaSection .image_container').each(function (imgContainer) {
+// use forEach statement to iterate throw a node list generated with Element.querySelectorAll('css selector');
+// https://gist.github.com/DavidBruant/1016007
+NodeList.prototype.forEach = Array.prototype.forEach;
+HTMLCollection.prototype.forEach = Array.prototype.forEach;
 
-            var smLink = imgContainer.getElements('a.socialmediaLink')[0];
-            var deleteIcon = imgContainer.getElements('.removeSocialmediaIcon');
 
-            // ajax request: delete socialmedia link
-            deleteIcon.addEvent('click', function () {
+// Plain javascript!!!!
+window.addEventListener('load', function () {
+
+    document.querySelectorAll('.mod_member_rating_logged_in_users_profile .socialmediaSection .image_container').forEach(function (imgContainer) {
+
+        var smLink = imgContainer.querySelector('a.socialmediaLink');
+        var deleteIcon = imgContainer.querySelector('img.removeSocialmediaIcon');
+
+        // ajax request: delete socialmedia linke
+        if (deleteIcon !== null) {
+            deleteIcon.addEventListener('click', function () {
                 var data = new FormData();
                 data.append('REQUEST_TOKEN', ModuleVars.REQUEST_TOKEN);
                 data.append('type', smLink.getAttribute('href'));
@@ -21,64 +36,71 @@ window.addEvent('domready', function () {
                 // Call a function when the state changes.
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        imgContainer.destroy();
+                        _removeNode(imgContainer);
                     }
-                }
+                };
                 xhr.send(data);
             });
-        });
-    }
+        }
+    });
 
-
-
-    if ($$('.starbox')) {
+    if (document.querySelector('.starbox')) {
         var ratingValue = 0;
-        $$('.starbox img.star').each(function (el) {
+        document.querySelectorAll('.starbox img.star').forEach(function (el) {
             ratingValue++;
-            el.setProperty('onclick', 'rate(this,' + ratingValue + ')');
+            el.setAttribute('onclick', 'rate(this,' + ratingValue + ')');
         });
 
-        // inject hidden-field to bottom
-        var form = $$('.starbox')[0].getParent('form');
-        form.setProperty('onsubmit', 'if(!checkForm(this))return false;');
+        var elStarbox = document.querySelector('.starbox');
+        if (_getParents(elStarbox, 'form')) {
+            _getParents(elStarbox, 'form').setAttribute('onsubmit', 'if(!validateForm(this))return false;');
+        }
     }
 });
 
-
-function checkForm(form) {
-    if (document.id('ctrl_score').value == '') {
+/**
+ *
+ * @param form
+ * @returns {boolean}
+ */
+function validateForm(form) {
+    if (document.querySelector('#ctrl_score').value == '') {
         alert(objLang.err_add_score_between + ' 1 & 5.');
         return false;
     }
     return true;
 }
 
-
+/**
+ *
+ * @param el
+ * @param value
+ */
 function rate(el, value) {
-    document.id('ctrl_score').value = value;
-    $$('.starbox img.star').each(function (star) {
-        star.removeClass('selected');
+    document.querySelector('#ctrl_score').value = value;
+    document.querySelectorAll('.starbox img.star').forEach(function (star) {
+        star.classList.remove('selected');
     });
     // add class to active star
-    el.addClass('selected');
-    if (document.id('ctrl_score') != 'undefined') {
-        document.id('ctrl_score').value = value;
+    el.classList.add('selected');
+    if (document.querySelector('#ctrl_score') != 'undefined') {
+        document.querySelector('#ctrl_score').value = value;
     }
 
     if (value > 0) {
         var i = 0;
-        $$('.starbox img.star').each(function (star) {
+        document.querySelectorAll('.starbox img.star').forEach(function (star) {
             i++;
             if (i == 0) {
                 i = 1;
             }
             if (i == value || i < value) {
                 //blue
-                star.src = objLang.imgDir + '/starrating/star_1.jpg';
+                star.src = ModuleVars.imgDir + '/starrating/star_1.jpg';
             }
             else if (i > value) {
                 //grey
-                star.src = objLang.imgDir + '/starrating/star_2.jpg';
+                star.src = ModuleVars.imgDir + '/starrating/star_2.jpg';
             } else {
                 //
             }
@@ -86,6 +108,11 @@ function rate(el, value) {
     }
 }
 
+/**
+ *
+ * @param el
+ * @param commentId
+ */
 function toggleVisibility(el, commentId) {
     // ajax request: activate odr deactivate rating
     var xhr = new XMLHttpRequest();
@@ -96,9 +123,34 @@ function toggleVisibility(el, commentId) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             if (xhr.responseText != '') {
-                el.setAttribute('src', objLang.imgDir + '/' + xhr.responseText + '.png');
+                el.setAttribute('src', ModuleVars.imgDir + '/' + xhr.responseText + '.png');
             }
         }
     }
     xhr.send(params);
+}
+
+/**
+ * getParent Element
+ * mootools getParent() equivalent
+ * @param o
+ * @param tag
+ * @returns {*}
+ * @private
+ */
+function _getParents(o, tag) {
+    while ((o = o.parentNode) && o.tagName) {
+        if (o.tagName.toLowerCase() == tag.toLowerCase()) {
+            return o;
+        }
+    }
+    return null;
+}
+/**
+ * remove node mootools destroy() equivalent
+ * @param elNode
+ * @private
+ */
+function _removeNode(elNode) {
+    elNode.parentNode.removeChild(elNode);
 }

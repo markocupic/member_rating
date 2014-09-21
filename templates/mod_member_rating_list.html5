@@ -37,4 +37,10 @@
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+
+<script>
+    <?php echo $this->JsLanguageObject; ?>
+    <?php echo $this->JsModuleObject; ?>
+
+</script>
 </div>
