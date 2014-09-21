@@ -12,8 +12,9 @@
 // fields
 $GLOBALS['TL_LANG']['tl_module']['blockingTime']        			= array('Sperrzeit', 'Legen Sie die Sperrzeit in Sekunden fest, wie lange gewartet werden soll, bis Mitglieder erneut eine Wertung abgeben können.');
 $GLOBALS['TL_LANG']['tl_module']['detailPage']          			= array('Seite für die Detailansicht', 'Legen Sie die Seite für die Detailansicht fest.');
-$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_ActivateComment'] = array('Weiterleitungsseite nach dem Aktivieren des Kommentars', 'Legen Sie die Weiterleitungsseite fest.');
-$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_DeleteComment'] 	= array('Weiterleitungsseite nach dem Löschen des Kommentars', 'Legen Sie die Weiterleitungsseite fest.');
+$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_ActivateComment']          = array('Weiterleitungsseite nach dem Aktivieren des Kommentars', 'Legen Sie die Weiterleitungsseite fest.');
+$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_DeleteComment'] 	       = array('Weiterleitungsseite nach dem Löschen des Kommentars', 'Legen Sie die Weiterleitungsseite fest.');
+$GLOBALS['TL_LANG']['tl_module']['showTop3']     			       = array('Zeige die besten und aktuellsten 3 Wertungen', 'Zeige die besten und aktuellsten 3 Wertungen in der Detailansicht.');
 $GLOBALS['TL_LANG']['tl_module']['notifyRatedUser']     			= array('Bewertete Mitglieder per Email benachrichtigen', '');
 $GLOBALS['TL_LANG']['tl_module']['sortingField1']       			= array('1. Sortierkriterium', 'Wählen Sie das Fald, nachdem sortiert werden soll.');
 $GLOBALS['TL_LANG']['tl_module']['sortingField2']       			= array('2. Sortierkriterium', 'Wählen Sie das Fald, nachdem sortiert werden soll.');

@@ -40,50 +40,30 @@ abstract class MemberRating extends \Module
 
 
 	/**
-	 * @param object $objModule
-	 * @param string $strColumn
-	 */
-	public function __construct($objModule, $strColumn = 'main')
-	{
-		define('MOD_MEMBER_RATING', 'true');
-		require_once TL_ROOT . '/system/modules/member_rating/helper/functions.php';
-
-		// set the item from the auto_item parameter
-		if($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
-		{
-			\Input::setGet('member', \Input::get('auto_item'));
-		}
-
-		// set the loggedInUser var
-		if(FE_USER_LOGGED_IN)
-		{
-			$this->User = \FrontendUser::getInstance();
-			$this->loggedInUser = $this->User;
-		}
-
-		// overwrite imageDir if a custom directory was selected
-		$this->setImageDir();
-
-		return parent::__construct($objModule, $strColumn);
-	}
-
-
-	/**
 	 * @return string|void
 	 */
 	public function generate()
 	{
-		$this->loadDataContainer('tl_comments');
+              define('MOD_MEMBER_RATING', 'true');
+
+              require_once TL_ROOT . '/system/modules/member_rating/helper/functions.php';
+
+
+              // Set the loggedInUser var
+              if(FE_USER_LOGGED_IN)
+              {
+                     $this->User = \FrontendUser::getInstance();
+                     $this->loggedInUser = $this->User;
+              }
+
+              // Overwrite imageDir if a custom directory was selected
+              $this->setImageDir();
+
+              // Load DCA
+              $this->loadDataContainer('tl_comments');
 		$this->loadDataContainer('tl_member');
 		$this->loadLanguageFile('tl_comments');
 		$this->loadLanguageFile('tl_member');
-
-		// handle Ajax requests
-		if(\Input::get('isAjaxRequest'))
-		{
-			$this->handleAjax();
-			exit();
-		}
 
 		return parent::generate();
 	}
@@ -95,7 +75,8 @@ abstract class MemberRating extends \Module
 	public function addTemplateVars()
 	{
 		// MSC
-		$this->Template->loggedInUser = $this->loggedInUser;
+		$this->Template->loggedInUser = $this->loggedInUser ? $this->loggedInUser : null;
+              $this->Template->ratedUser = $this->ratedUser ? $this->ratedUser : null;
 
 		// closures
 		$this->Template->getImageDir = function ()
@@ -188,9 +169,9 @@ abstract class MemberRating extends \Module
 	protected function handleAjax()
 	{
 		// delete socialmedia links
-		if(\Input::get('act') == 'delSocialMediaLink' && \Input::post('type'))
+		if(\Input::get('act') == 'delSocialmediaLink' && \Input::post('type'))
 		{
-			if(FE_USER_LOGGED_IN)
+                     if(FE_USER_LOGGED_IN)
 			{
 				$arrSocialmediaLinks = deserialize($this->loggedInUser->socialmediaLinks);
 				if(array_search(\Input::post('type'), $arrSocialmediaLinks) !== false)

@@ -22,7 +22,7 @@ Controller::loadLanguageFile('tl_member');
 // palettes
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'notifyRatedUser';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_list'] = '{title_legend},name,headline,type;{sortOptions::hide},sortingField1,sortingDirection1,sortingField2,sortingDirection2,sortingField3,sortingDirection3;{detailPage:hide},detailPage;{avatar:hide},avatarSizeListing;{template_legend:hide},memberRatingListTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_detail'] = '{title_legend},name,headline,type,blockingTime;{jumpTo_legend:hide},jumpTo;{notify:hide},notifyRatedUser;{avatar:hide},avatarSizeProfile,avatarSizeListing;{template_legend:hide},memberRatingDetailTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_detail'] = '{title_legend},name,headline,type,showTop3,perPage,blockingTime;{jumpTo_legend:hide},jumpTo;{notify:hide},notifyRatedUser;{avatar:hide},avatarSizeProfile,avatarSizeListing;{template_legend:hide},memberRatingDetailTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_logged_in_users_profile'] = '{title_legend},name,headline,type;{avatar:hide},avatarSizeProfile;{template_legend:hide},memberRatingLoggedInUsersProfileTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['notifyRatedUser'] = 'emailNotifyPage_ActivateComment,emailNotifyPage_DeleteComment';
 
@@ -45,6 +45,15 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['notifyRatedUser'] = array
 	'inputType' => 'checkbox',
 	'eval'      => array('submitOnChange' => true,'tl_class' => 'clr m12'),
 	'sql'       => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['showTop3'] = array
+(
+       'label'     => &$GLOBALS['TL_LANG']['tl_module']['showTop3'],
+       'exclude'   => true,
+       'inputType' => 'checkbox',
+       'eval'      => array('submitOnChange' => true,'tl_class' => 'clr m12'),
+       'sql'       => "char(1) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['emailNotifyPage_ActivateComment'] = array
@@ -74,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['blockingTime'] = array
 	'label'     => &$GLOBALS['TL_LANG']['tl_module']['blockingTime'],
 	'exclude'   => true,
 	'inputType' => 'text',
-	'eval'      => array('fieldType' => 'radio','tl_class' => 'clr'),
+	'eval'      => array('fieldType' => 'radio','tl_class' => 'w50'),
 	'sql'       => "int(10) unsigned NOT NULL default '0'",
 );
 
@@ -177,7 +186,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingListTemplate'] = array
 	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingListTemplate'],
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('tl_member_rating', 'getListTemplates'),
+	'options_callback'        => array('tl_member_rating_module', 'getListTemplates'),
 	'sql'                     => "varchar(64) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingDetailTemplate'] = array
@@ -185,7 +194,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingDetailTemplate'] = array
 	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingDetailTemplate'],
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('tl_member_rating', 'getDetailTemplates'),
+	'options_callback'        => array('tl_member_rating_module', 'getDetailTemplates'),
 	'sql'                     => "varchar(64) NOT NULL default ''"
 );
 
@@ -194,21 +203,21 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingLoggedInUsersProfileTempl
        'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingLoggedInUsersProfileTemplate'],
        'exclude'                 => true,
        'inputType'               => 'select',
-       'options_callback'        => array('tl_member_rating', 'getLoggedInUsersProfileTemplates'),
+       'options_callback'        => array('tl_member_rating_module', 'getLoggedInUsersProfileTemplates'),
        'sql'                     => "varchar(64) NOT NULL default ''"
 );
 
 
 
 /**
- * Class tl_member_rating
+ * Class tl_member_rating_module
  *
  * Provide miscellaneous methods that are used by the data configuration array.
  * @copyright  Leo Feyer 2005-2014
  * @author     Leo Feyer <https://contao.org>
  * @package    Core
  */
-class tl_member_rating extends Backend
+class tl_member_rating_module extends Backend
 {
 
 	/**

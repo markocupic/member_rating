@@ -15,7 +15,7 @@ window.addEvent('domready', function () {
                 data.append('REQUEST_TOKEN', ModuleVars.REQUEST_TOKEN);
                 data.append('type', smLink.getAttribute('href'));
                 var xhr = new XMLHttpRequest();
-                var params = "?isAjaxRequest=true&act=delSocialMediaLink";
+                var params = "?isAjaxRequest=true&act=delSocialmediaLink";
                 xhr.open("POST", document.URL + params, true);
 
                 // Call a function when the state changes.

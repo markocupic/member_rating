@@ -13,22 +13,22 @@
             <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['me']; ?></h2>
             <div class="avatar">
                 <div class="image_container">
-                    <?php echo $this->loggedInUser->avatar; ?>
-                    <?php if($this->loggedInUser->gradeIcon): ?>
-                        <?php echo $this->loggedInUser->gradeIcon; ?>
+                    <?php echo $this->avatar; ?>
+                    <?php if($this->gradeIcon): ?>
+                        <?php echo $this->gradeIcon; ?>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div class="gradeBox">
-                <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->loggedInUser->gradeLabel; ?></span>{{br}}
-                <span class="score"><?php echo $this->loggedInUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+                <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->gradeLabel; ?></span>{{br}}
+                <span class="score"><?php echo $this->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
             </div>
         </div>
         <!-- socialmedia icons -->
-        <?php if($this->loggedInUser->socialmediaLinks): ?>
+        <?php if($this->socialmediaLinks): ?>
             <div class="socialmediaSection">
-            <?php foreach($this->loggedInUser->socialmediaLinks as $k => $href): ?>
+            <?php foreach($this->socialmediaLinks as $href): ?>
                 <div class="image_container">
                     <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
                         <?php echo $this->getSocialmediaIcon($href); ?>

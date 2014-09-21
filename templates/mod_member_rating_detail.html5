@@ -9,24 +9,24 @@
 
     <!-- avatar & profile of selected user -->
     <div class="ratedUserProfile">
-        <h2><?php echo $this->ratedUser->firstname; ?> <?php echo $this->ratedUser->lastname; ?></h2>
+        <h2><?php echo $this->firstname; ?> <?php echo $this->lastname; ?></h2>
         <div class="avatar">
             <div class="image_container">
-                <?php echo $this->ratedUser->avatar; ?>
-                <?php if($this->ratedUser->gradeIcon): ?>
-                <?php echo $this->ratedUser->gradeIcon; ?>
+                <?php echo $this->avatar; ?>
+                <?php if($this->gradeIcon): ?>
+                <?php echo $this->gradeIcon; ?>
                 <?php endif; ?>
             </div>
         </div>
 
         <div class="gradeBox">
-            <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->ratedUser->gradeLabel; ?></span>{{br}}
-            <span class="score"><?php echo $this->ratedUser->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
+            <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->gradeLabel; ?></span>{{br}}
+            <span class="score"><?php echo $this->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
         </div>
         <!-- socialmedia icons -->
-        <?php if($this->ratedUser->socialmediaLinks): ?>
+        <?php if($this->socialmediaLinks): ?>
         <div class="socialmediaSection">
-            <?php foreach($this->ratedUser->socialmediaLinks as $k => $href): ?>
+            <?php foreach($this->socialmediaLinks as $href): ?>
             <div class="image_container">
                 <a href="<?php echo $href; ?>" title="<?php echo $href; ?>" class="socialmediaLink">
                     <?php echo $this->getSocialmediaIcon($href); ?>
@@ -37,40 +37,44 @@
         <?php endif; ?>
     </div>
 
-
-    <!-- top3 list -->
-    <?php if($this->ratedUser->top3): ?>
-        <h2>Top 3</h2>
-        <div class="top3">
-            <?php foreach($this->ratedUser->top3 as $comment): ?>
-                <div class="row">
-                    <div class="col_0">
-                        <div class="image_container">
-                            <?php echo $comment['avatar']; ?>
-                        </div>
-                    </div>
-                    <div class="col_1">
-                        <div class="time"><?php echo $comment['time']; ?></div>
-                        <div class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?>: <?php echo $comment['score']; ?></div>
-                        <div class="author"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo \MemberRating\MemberRating::findMemberByPk($comment['owner'], 'fullname'); ?></div>
-                        <div class="text">
-                            <?php echo $comment['comment']; ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <div style="clear:both;"></div>
+    <?php if($this->showTop3): ?>
+           <!-- top3 list -->
+           <?php if($this->top3): ?>
+               <h2>Top 3</h2>
+               <div class="top3">
+                   <?php foreach($this->top3 as $comment): ?>
+                       <div class="row">
+                           <div class="col_0">
+                               <div class="image_container">
+                                   <?php echo $comment['avatar']; ?>
+                               </div>
+                           </div>
+                           <div class="col_1">
+                               <div class="time"><?php echo $comment['time']; ?></div>
+                               <div class="score"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?>: <?php echo $comment['score']; ?></div>
+                               <div class="author"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['comment_by']; ?>: <?php echo \MemberRating\MemberRating::findMemberByPk($comment['owner'], 'fullname'); ?></div>
+                               <div class="text">
+                                   <?php echo $comment['comment']; ?>
+                               </div>
+                           </div>
+                       </div>
+                   <?php endforeach; ?>
+               </div>
+               <div style="clear:both;"></div>
+           <?php endif; ?>
     <?php endif; ?>
+
 
 
 
     <!-- all ratings -->
     <h2><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['all_ratings']; ?></h2>
+    <?php echo $this->pagination; ?>
+
     <div class="allRatings">
-        <?php if($this->ratedUser->allRatings): ?>
+        <?php if($this->allRatings): ?>
                 <div class="notempty<?php echo ($this->ratedUser->id != $this->loggedInUser->id) ?: ' myprofile'; ?>">
-                    <?php foreach($this->ratedUser->allRatings as $comment): ?>
+                    <?php foreach($this->allRatings as $comment): ?>
                         <div class="row">
                             <div class="col_0">
                                 <div class="image_container">
