@@ -49,6 +49,13 @@ class MemberRatingDetail extends MemberRating
                      \Input::setGet('member', \Input::get('auto_item'));
               }
 
+              // activate comment by token via url
+              if (strlen(\Input::get('activation_token')))
+              {
+                     $this->activateOrDelete();
+                     exit;
+              }
+
               // set the ratedUser var
               $this->ratedUser = \MemberModel::findByPk(\Input::get('member'));
               if ($this->ratedUser === NULL)
@@ -79,13 +86,6 @@ class MemberRatingDetail extends MemberRating
               {
                      $this->handleAjax();
                      exit();
-              }
-
-              // activate comment by token via url
-              if (strlen(\Input::get('activation_token')))
-              {
-                     $this->activateOrDelete();
-                     exit;
               }
 
               // add miscellaneous vars to the template
