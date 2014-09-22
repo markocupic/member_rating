@@ -121,7 +121,7 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
               $field = 'socialmediaLinks';
               $strClass = $GLOBALS['TL_FFL'][$arrData['inputType']];
               $arrData['eval']['tableless'] = 'true';
-              $arrData['label'] = 'Socialmedia Links hinzufügen';
+              $arrData['label'] = $GLOBALS['TL_LANG']['tl_member']['socialmediaLinks'][0];
               $varValue = 'http://';
               $objWidget = new $strClass($strClass::getAttributesFromDca($arrData, $field, $varValue, '', '', $this));
               $objWidget->storeValues = true;
@@ -166,6 +166,7 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
                                           $arrSocialMediaLinks[] = $value;
                                           $objMember->socialmediaLinks = serialize($arrSocialMediaLinks);
                                           $objMember->save();
+                                          $this->log('A new version of tl_member ID ' . $objMember->id . ' has been created', __METHOD__, TL_GENERAL);
                                           $this->reload();
                                    }
                             }

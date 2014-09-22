@@ -133,6 +133,7 @@ abstract class MemberRating extends \Module
               if (\Input::get('del') == 'true')
               {
                      $dbChange = true;
+                     $this->log('DELETE FROM tl_comments WHERE id=' . $objComments->id, __METHOD__, TL_GENERAL);
                      $objComments->delete();
                      $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
                      if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_DeleteComment)) !== null)
@@ -146,6 +147,7 @@ abstract class MemberRating extends \Module
                      $objComments->published = 1;
                      $objComments->activation_token = '';
                      $objComments->save();
+                     $this->log('A new version of tl_comments ID ' . $objComments->id . ' has been created', __METHOD__, TL_GENERAL);
                      $msg = $GLOBALS['TL_LANG']['MOD']['member_rating']['itemHasBeenActivated'];
                      if (($objNextPage = \PageModel::findPublishedById($this->emailNotifyPage_ActivateComment)) !== null)
                      {
@@ -183,6 +185,8 @@ abstract class MemberRating extends \Module
                             }
                             $this->loggedInUser->socialmediaLinks = serialize(array_values($arrSocialmediaLinks));
                             $this->loggedInUser->save();
+                            $this->log('A new version of tl_member ID ' . $this->loggedInUser->id . ' has been created', __METHOD__, TL_GENERAL);
+
                      }
               }
 
@@ -199,6 +203,7 @@ abstract class MemberRating extends \Module
                                           $isPublished = $objComment->published ? 0 : 1;
                                           $objComment->published = $isPublished;
                                           $objComment->save();
+                                          $this->log('A new version of tl_comments ID ' . $objComment->id . ' has been created', __METHOD__, TL_GENERAL);
                                           $strReturn = $isPublished == 0 ? 'invisible' : 'visible';
                                           echo $strReturn;
                                    }

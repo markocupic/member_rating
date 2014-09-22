@@ -324,7 +324,6 @@ class MemberRatingDetail extends MemberRating
                      $objComment->activation_token = md5(session_id() . time() . $this->loggedInUser->id);
                      $objComment->parent = $this->ratedUser->id;
                      $objComment->published = 0;
-
                      $objComment->save();
                      $this->log('A new entry "tl_comments.id=' . $objComment->id . '" has been created', __METHOD__, TL_GENERAL);
 
