@@ -1,3 +1,11 @@
+<?php
+/**
+ * personalize email with simple tokens:
+ * ##author_firstname##
+ * ##recipient_lastname##
+ * ##comments_score##
+ */
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -6,8 +14,8 @@
 </head>
     <body>
         <div>
-            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_1'], $this->name); ?></p>
-            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_2'], $this->author, $this->score, $GLOBALS['TL_LANG']['MOD']['member_rating']['score']); ?></p>
+            <p><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_1']; ?></p>
+            <p><?php echo sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['line_2'], $GLOBALS['TL_LANG']['MOD']['member_rating']['score']); ?></p>
             {{br}}
             {{br}}
             <p>

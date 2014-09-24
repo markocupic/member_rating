@@ -22,7 +22,6 @@ class MemberRatingDetail extends MemberRating
         */
        protected $strTemplate = 'mod_member_rating_detail';
 
-
        /**
         * @return string
         */
@@ -44,7 +43,7 @@ class MemberRatingDetail extends MemberRating
               }
 
               // Set the item from the auto_item parameter
-              if($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
+              if ($GLOBALS['TL_CONFIG']['useAutoItem'] && isset($_GET['auto_item']))
               {
                      \Input::setGet('member', \Input::get('auto_item'));
               }
@@ -58,7 +57,7 @@ class MemberRatingDetail extends MemberRating
 
               // set the ratedUser var
               $this->ratedUser = \MemberModel::findByPk(\Input::get('member'));
-              if ($this->ratedUser === NULL)
+              if ($this->ratedUser === null)
               {
                      return '';
               }
@@ -73,16 +72,16 @@ class MemberRatingDetail extends MemberRating
               return parent::generate();
        }
 
-
        /**
         * Generate the module
         */
        protected function compile()
        {
+
               $this->Database->prepare('DELETE FROM tl_comments WHERE source = ? AND (owner < ? OR parent < ?)')->execute('tl_member', '1', '1');
 
               // handle Ajax requests
-              if(\Input::get('isAjaxRequest') && \Input::get('act') == 'toggleVisibility' )
+              if (\Input::get('isAjaxRequest') && \Input::get('act') == 'toggleVisibility')
               {
                      $this->handleAjax();
                      exit();
@@ -108,14 +107,8 @@ class MemberRatingDetail extends MemberRating
 
               // add data to template
               $keys = array(
-                     'firstname',
-                     'lastname',
-                     'avatar',
-                     'socialmediaLinks',
-                     'deleteSocialmediaLinkIcon',
-                     'score',
-                     'gradeLabel',
-                     'gradeIcon',
+                     'firstname', 'lastname', 'avatar', 'socialmediaLinks', 'deleteSocialmediaLinkIcon', 'score',
+                     'gradeLabel', 'gradeIcon',
               );
               foreach ($keys as $key)
               {
@@ -132,7 +125,7 @@ class MemberRatingDetail extends MemberRating
                      {
                             $objMember = \MemberModel::findByPk($row['owner']);
                             $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
-                            if ($objMember !== NULL)
+                            if ($objMember !== null)
                             {
                                    $row['firstname'] = $objMember->firstname;
                                    $row['lastname'] = $objMember->lastname;
@@ -161,7 +154,7 @@ class MemberRatingDetail extends MemberRating
               {
                      $objMember = \MemberModel::findByPk($row['owner']);
                      $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
-                     if ($objMember !== NULL)
+                     if ($objMember !== null)
                      {
                             $row['firstname'] = $objMember->firstname;
                             $row['lastname'] = $objMember->lastname;
@@ -186,7 +179,7 @@ class MemberRatingDetail extends MemberRating
                      $page = \Input::get($id) ?: 1;
 
                      // Do not index or cache the page if the page number is outside the range
-                     if ($page < 1 || $page > max(ceil($total/$this->perPage), 1))
+                     if ($page < 1 || $page > max(ceil($total / $this->perPage), 1))
                      {
                             global $objPage;
                             $objPage->noSearch = 1;
@@ -205,7 +198,7 @@ class MemberRatingDetail extends MemberRating
               }
 
               $arrRatings = array();
-              for ($i=$offset; $i<$limit; $i++)
+              for ($i = $offset; $i < $limit; $i++)
               {
                      $arrRatings[] = $arrAllRatings[$i];
               }
@@ -222,7 +215,6 @@ class MemberRatingDetail extends MemberRating
               }
 
        }
-
 
        /**
         * generate voting-form
@@ -246,9 +238,7 @@ class MemberRatingDetail extends MemberRating
 
               // Build the form
               $arrFF = array(
-                     'comment',
-                     'score',
-                     'captcha'
+                     'comment', 'score', 'captcha'
               );
               foreach ($arrFF as $field)
               {
@@ -336,7 +326,7 @@ class MemberRatingDetail extends MemberRating
               }
               if ($scoreError)
               {
-                     $strFields = '<p class="error">Bitte eine gültige Punktzahl vergeben.</p>' . $strFields;
+                     $strFields = '<p class="error">Bitte eine g&uuml;ltige Punktzahl vergeben.</p>' . $strFields;
               }
               $this->Template->slabel = specialchars($GLOBALS['TL_LANG']['MSC']['saveData']);
               $this->Template->fields = $strFields;
@@ -364,7 +354,6 @@ class MemberRatingDetail extends MemberRating
               }
        }
 
-
        /**
         * @param $objComment
         */
@@ -373,7 +362,7 @@ class MemberRatingDetail extends MemberRating
 
               global $objPage;
               $objRatedMember = \MemberModel::findByPk($objComment->parent);
-              if ($objRatedMember === NULL)
+              if ($objRatedMember === null)
               {
                      return;
               }
@@ -384,37 +373,48 @@ class MemberRatingDetail extends MemberRating
               }
 
               $objAuthor = \MemberModel::findByPk($objComment->owner);
-              if ($objAuthor === NULL)
+              if ($objAuthor === null)
               {
                      return;
               }
 
+              // Generate the data array for simple token use
+              $arrData = array();
+              foreach ($objAuthor->row() as $k => $v)
+              {
+                     $arrData['author_' . $k] = $v;
+              }
+              foreach ($objRatedMember->row() as $k => $v)
+              {
+                     $arrData['recipient_' . $k] = $v;
+              }
+              foreach ($objComment->row() as $k => $v)
+              {
+                     $arrData['comments_' . $k] = $v;
+              }
+
               $objTemplate = new \FrontendTemplate('member_rating_email_notification');
-              $objTemplate->name = $objRatedMember->firstname;
-              $objTemplate->author = $objAuthor->firstname . ' ' . $objAuthor->lastname;
               $objTemplate->comment = nl2br($objComment->comment);
               $objTemplate->score = $objComment->score;
-              $objTemplate->link = 'http://' . $_SERVER['SERVER_NAME'] . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?publish=true&activation_token=' . $objComment->activation_token;
-              $objTemplate->link_del = 'http://' . $_SERVER['SERVER_NAME'] . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?del=true&activation_token=' . $objComment->activation_token;
+              $objTemplate->link = \Environment::get('url') . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?publish=true&activation_token=' . $objComment->activation_token;
+              $objTemplate->link_del = \Environment::get('url') . '/' . \Controller::generateFrontendUrl($objPage->row(), '', $objPage->language) . '?del=true&activation_token=' . $objComment->activation_token;
               $strContent = $objTemplate->parse();
 
               // Mail
               $objEmail = new \Email();
-              $objEmail->subject = sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['subject'], $objTemplate->author, $_SERVER['SERVER_NAME']);
+              $strSubject = sprintf($GLOBALS['TL_LANG']['MOD']['member_rating']['emailNotify']['subject'], $_SERVER['SERVER_NAME']);
+              $objEmail->subject = \String::parseSimpleTokens($strSubject, $arrData);
               $strContent = $this->replaceInsertTags($strContent);
+              $strContent = \String::parseSimpleTokens($strContent, $arrData);
               $objEmail->html = $strContent;
 
-              // text version
+              // Text version
               $strContent = \String::decodeEntities($strContent);
               $strContent = strip_tags($strContent);
               $strContent = str_replace(array(
-                                               '[&]',
-                                               '[lt]',
-                                               '[gt]'
+                                               '[&]', '[lt]', '[gt]'
                                         ), array(
-                                               '&',
-                                               '<',
-                                               '>'
+                                               '&', '<', '>'
                                         ), $strContent);
               $objEmail->text = $strContent;
 
