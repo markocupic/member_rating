@@ -31,6 +31,9 @@ if (TL_MODE == 'FE')
         * Register the auto_item keywords
         */
        $GLOBALS['TL_AUTO_ITEM'][] = 'member';
+
+       // auto add groupmembership
+       $GLOBALS['TL_HOOKS']['postLogin'][] = array('MemberRating\\MemberRatingHelper', 'addGroupMembership');
 }
 
 

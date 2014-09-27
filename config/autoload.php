@@ -25,6 +25,9 @@ ClassLoader::addNamespaces(array
  */
 ClassLoader::addClasses(array
 (
+	// Classes
+	'MCupic\MemberRating\MemberRatingHelper'               => 'system/modules/member_rating/classes/MemberRatingHelper.php',
+
 	// Modules
 	'MCupic\MemberRating\MemberRatingLoggedInUsersProfile' => 'system/modules/member_rating/modules/MemberRatingLoggedInUsersProfile.php',
 	'MCupic\MemberRating\MemberRatingList'                 => 'system/modules/member_rating/modules/MemberRatingList.php',
