@@ -78,8 +78,6 @@ class MemberRatingDetail extends MemberRating
        protected function compile()
        {
 
-              $this->Database->prepare('DELETE FROM tl_comments WHERE source = ? AND (owner < ? OR parent < ?)')->execute('tl_member', '1', '1');
-
               // handle Ajax requests
               if (\Input::get('isAjaxRequest') && \Input::get('act') == 'toggleVisibility')
               {
@@ -91,6 +89,14 @@ class MemberRatingDetail extends MemberRating
               $this->addTemplateVars();
 
               // ***** RATED USER PROFILE *****
+              foreach($this->ratedUser->row() as $k => $v)
+              {
+                     if($k == 'password'){
+                            continue;
+                     }
+                     $this->Template->ratedUser->$k = $v;
+              }
+
               // get avatar of rated user
               $arrSize = deserialize($this->avatarSizeProfile);
               $title = $this->ratedUser->firstname . ' ' . $this->ratedUser->lastname;
@@ -127,8 +133,14 @@ class MemberRatingDetail extends MemberRating
                             $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
                             if ($objMember !== null)
                             {
-                                   $row['firstname'] = $objMember->firstname;
-                                   $row['lastname'] = $objMember->lastname;
+                                   foreach(\MemberModel::findByPk($objMember->id)->row() as $k => $v)
+                                   {
+                                          if($k == 'id' || $k == 'tstamp' || $k == 'password'){
+                                                 continue;
+                                          }
+                                          $row[$k] = $v;
+                                   }
+
                                    // avatar
                                    $arrSize = deserialize($this->avatarSizeListing);
                                    $title = $objMember->firstname . ' ' . $objMember->lastname;
@@ -156,8 +168,14 @@ class MemberRatingDetail extends MemberRating
                      $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
                      if ($objMember !== null)
                      {
-                            $row['firstname'] = $objMember->firstname;
-                            $row['lastname'] = $objMember->lastname;
+                            foreach(\MemberModel::findByPk($objMember->id)->row() as $k => $v)
+                            {
+                                   if($k == 'id' || $k == 'tstamp' || $k == 'password'){
+                                          continue;
+                                   }
+                                   $row[$k] = $v;
+                            }
+
                             // avatar
                             $arrSize = deserialize($this->avatarSizeListing);
                             $title = $objMember->firstname . ' ' . $objMember->lastname;

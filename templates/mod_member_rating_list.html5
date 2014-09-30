@@ -34,6 +34,13 @@
                         </div>
                     </div>
                 </div>
+                <?php
+                    // display other properties
+                    // $member['street']
+                    // $member['city']
+                    // $member['dateOfBirth']
+                    // etc...
+                ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

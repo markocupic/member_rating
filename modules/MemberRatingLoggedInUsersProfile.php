@@ -76,6 +76,13 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
               if (FE_USER_LOGGED_IN)
               {
                      // ***** LOGGED USER PROFILE *****
+                     foreach(\MemberModel::findByPk($this->loggedInUser->id)->row() as $k => $v)
+                     {
+                            if($k == 'password'){
+                                   continue;
+                            }
+                            $this->Template->loggedInUser->$k = $v;
+                     }
                      // get avatar of logged in user
                      $arrSize = deserialize($this->avatarSizeProfile);
                      $title = $this->loggedInUser->firstname . ' ' . $this->loggedInUser->lastname;

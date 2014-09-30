@@ -75,6 +75,13 @@ class MemberRatingList extends MemberRating
               $arrRows = array();
               while ($row = $objMember->fetchAssoc())
               {
+                     foreach($row as $k => $v)
+                     {
+                            if($k == 'id' || $k == 'tstamp' || $k == 'password' || $k == 'avatar'){
+                                   continue;
+                            }
+                            $row[$k] = $v;
+                     }
                      // score and grade
                      $row['score'] = $this->getScore($row['id']);
                      $row['gradeLabel'] = $this->getGrade($row['id'], 'label');

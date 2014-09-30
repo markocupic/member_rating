@@ -18,7 +18,6 @@
                     <?php endif; ?>
                 </div>
             </div>
-
             <div class="gradeBox">
                 <span class="gradeLabel"><?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['grade']; ?>: <?php echo $this->gradeLabel; ?></span>{{br}}
                 <span class="score"><?php echo $this->score; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score']; ?></span>{{br}}{{br}}
@@ -37,6 +36,13 @@
             <?php endforeach; ?>
             </div>
         <?php endif; ?>
+        <?php
+            // display other properties
+            // $this->loggedInUser->street;
+            // $this->loggedInUser->city;
+            // $this->loggedInUser->dateOfBirth;
+            // etc...
+        ?>
         <!-- socialmedia links form -->
         <form<?php if ($this->action): ?> action="<?php echo $this->action; ?>"<?php endif; ?> id="<?php echo $this->socialMediaFormId; ?>" method="post" enctype="<?php echo $this->enctype; ?>">
 

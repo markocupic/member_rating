@@ -17,6 +17,15 @@
                 <?php echo $this->gradeIcon; ?>
                 <?php endif; ?>
             </div>
+            <?php
+                // display other properties
+                // $this->ratedUser->street;
+                // $this->ratedUser->city;
+                // $this->ratedUser->dateOfBirth;
+                // etc...
+            ?>
+
+
         </div>
 
         <div class="gradeBox">
@@ -56,6 +65,13 @@
                                <div class="text">
                                    <?php echo $comment['comment']; ?>
                                </div>
+                               <?php
+                                    // display other properties
+                                    // $comment['street']
+                                    // $comment['city']
+                                    // $comment['dateOfBirth']
+                                    // etc...
+                               ?>
                            </div>
                        </div>
                    <?php endforeach; ?>
@@ -93,6 +109,13 @@
                                 <div class="text">
                                     <?php echo $comment['comment']; ?>
                                 </div>
+                                <?php
+                                    // display other properties
+                                    // $comment['street']
+                                    // $comment['city']
+                                    // $comment['dateOfBirth']
+                                    // etc...
+                                ?>
                             </div>
                         </div>
                     <?php endforeach; ?>

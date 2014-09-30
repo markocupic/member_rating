@@ -36,6 +36,7 @@ abstract class MemberRating extends \Module
         */
        protected $loggedInUser;
 
+
        /**
         * @return string|void
         */
@@ -65,6 +66,7 @@ abstract class MemberRating extends \Module
 
               return parent::generate();
        }
+
 
        /**
         *
@@ -116,6 +118,7 @@ abstract class MemberRating extends \Module
               $this->Template->JsModuleObject = str_replace(',}', '}', $jsModuleVars);;
        }
 
+
        /**
         * activateOrDelete
         */
@@ -166,6 +169,7 @@ abstract class MemberRating extends \Module
               exit();
        }
 
+
        /**
         * handle ajax requests
         */
@@ -213,6 +217,7 @@ abstract class MemberRating extends \Module
               exit;
        }
 
+
        /**
         * get score of a member
         *
@@ -226,6 +231,7 @@ abstract class MemberRating extends \Module
               $score = $objPoints->sumscore <= 0 ? '0' : $objPoints->sumscore;
               return $score;
        }
+
 
        /**
         * @param $strLink
@@ -270,6 +276,7 @@ abstract class MemberRating extends \Module
               }
        }
 
+
        /**
         * @param $strHref
         * @return string
@@ -296,11 +303,12 @@ abstract class MemberRating extends \Module
               }
        }
 
+
        /**
         * @param $score
         * @return array
         */
-       public static function getGrade($id, $key)
+       public static function getGrade($id, $key = 'label')
        {
 
               $score = self::getScore($id);
@@ -309,26 +317,10 @@ abstract class MemberRating extends \Module
                      $score = 0;
               }
               $arrReturn = array();
-              $arrayGrades = array();
-              if (trim($GLOBALS['TL_CONFIG']['gradeLabeling']) != '')
-              {
-                     foreach (explode('***', trim($GLOBALS['TL_CONFIG']['gradeLabeling'])) as $strLine)
-                     {
-                            $arrLine = explode('|', $strLine);
-                            if (count($arrLine) != 3)
-                            {
-                                   continue;
-                            }
-                            if (!intval($arrLine[0]) && $arrLine[0] != '0')
-                            {
-                                   continue;
-                            }
-                            $arrayGrades[$arrLine[0]] = array(
-                                   'score' => $arrLine[0], 'label' => $arrLine[1], 'icon' => $arrLine[2]
-                            );
-                     }
-              }
+              $arrayGrades = MemberRating::getGradeLabelingArray();
+
               krsort($arrayGrades);
+
               $arrayGrades = count($arrayGrades) ? $arrayGrades : false;
               if ($arrayGrades)
               {
@@ -357,6 +349,32 @@ abstract class MemberRating extends \Module
               return $arrReturn[$key] ? $arrReturn[$key] : null;
        }
 
+
+       /**
+        * @return array
+        */
+       public static function getGradeLabelingArray()
+       {
+
+              $arrayGrades = array();
+              if (trim($GLOBALS['TL_CONFIG']['gradeLabeling']) != '')
+              {
+                     $arritems = explode('***', trim($GLOBALS['TL_CONFIG']['gradeLabeling']));
+                     foreach ($arritems as $item)
+                     {
+                            preg_match_all('/^(.*?)\|(.*?)\|(.*?)\|Groups{(.*?)}/', $item, $matches);
+                            $arrayGrades[$matches[1][0]] = array(
+                                   'score' => $matches[1][0],
+                                   'label' => $matches[2][0],
+                                   'icon' => $matches[3][0],
+                                   'groups' => array_values(explode(',', $matches[4][0]))
+                            );
+                     }
+              }
+              return $arrayGrades;
+       }
+
+
        /**
         * @param $memberId
         * @param array $arrSize
@@ -374,7 +392,9 @@ abstract class MemberRating extends \Module
               {
                      $size = sprintf('width="%s" height="%s"', $arrSize[0], $arrSize[1]);
                      $avatar = array(
-                            'alt' => specialchars($alt), 'title' => specialchars($title), 'size' => $size,
+                            'alt' => specialchars($alt),
+                            'title' => specialchars($title),
+                            'size' => $size,
                             'class' => strlen($class) ? ' class="' . $class . '"' : '',
                      );
 
@@ -411,6 +431,7 @@ abstract class MemberRating extends \Module
               }
        }
 
+
        /**
         * @param $memberId
         * @return bool|mixed
@@ -427,6 +448,7 @@ abstract class MemberRating extends \Module
                      }
               }
        }
+
 
        /**
         * @param null $id
@@ -456,6 +478,7 @@ abstract class MemberRating extends \Module
               return $username;
        }
 
+
        /**
         * @return string
         */
@@ -464,6 +487,7 @@ abstract class MemberRating extends \Module
 
               return MEMBER_RATING_IMAGE_DIR;
        }
+
 
        /**
         * @param $strPath
@@ -499,4 +523,43 @@ abstract class MemberRating extends \Module
               }
        }
 
+
+       /**
+        * @return array
+        */
+       public static function findAllGroups()
+       {
+
+              $arrGroups = array();
+              if (trim($GLOBALS['TL_CONFIG']['gradeLabeling']) != '')
+              {
+                     preg_match_all('/Groups{(.*?)}/', $GLOBALS['TL_CONFIG']['gradeLabeling'], $matches);
+                     foreach ($matches[1] as $strIDS)
+                     {
+                            foreach (explode(',', $strIDS) as $groupId)
+                            {
+                                   $arrGroups[] = $groupId;
+                            }
+                     }
+              }
+
+              return $arrGroups;
+       }
+
+
+       /**
+        * @param $memberId
+        * @param $arrGroups
+        */
+       public static function addToGroup($memberId, $arrGroups)
+       {
+
+              $objMember = \MemberModel::findByPk($memberId);
+              if ($objMember !== null)
+              {
+                     $groups = array_values(array_unique(array_merge(is_array(deserialize($objMember->groups)) ? deserialize($objMember->groups) : array(), $arrGroups)));
+                     $objMember->groups = serialize($groups);
+                     $objMember->save();
+              }
+       }
 }
