@@ -11,7 +11,7 @@
 
 // fields
 $GLOBALS['TL_LANG']['tl_settings']['gradeLabeling'] = array('Rangbezeichnung', 'Geben Sie die Rangbezeichnungen im folgenden Format ein:  0|Anwärter|level_1.png|Groups{}***500|Cooler Typ|level_2.png|Groups{9,10}***1000|Gottheit|level_3.png|Groups{9,10,11}');
-$GLOBALS['TL_LANG']['tl_settings']['socialmediaLinks'] = array('Socialmedia-Links', 'Geben Sie die Rangbezeichnungen im folgenden Format ein:  needle|needle.png***facebook|facebook.png***google|googleplus.png***twitter|twitter.png');
+$GLOBALS['TL_LANG']['tl_settings']['socialmediaLinks'] = array('Socialmedia-Links', 'Geben Sie die Socialmedia-Bezeichnungen im folgenden Format ein:  url-suchbegriff|icon.png***facebook.com|facebook.png***plus.google.com|googleplus.png***twitter|twitter.png');
 $GLOBALS['TL_LANG']['tl_settings']['customImageDir'] = array('Custom Bilderordner', 'Das gewählte Verzeichnis ersetzt das Verzeichnis "system/modules/member_rating/assets/images".');
 
 // labels
