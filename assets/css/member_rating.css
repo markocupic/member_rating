@@ -1,16 +1,16 @@
 /* mod_member_rating_list */
 /* mod_member_rating_list */
 /* mod_member_rating_list */
-.member_rating .mod_member_rating_list .comment {
+.mod_member_rating_list .comment {
 	position: relative;
 }
 
-.member_rating .mod_member_rating_list .col_1 {
-	position: absolute;
+.mod_member_rating_list .col_1 {
+	position: absolute; 
 	left: 0;
 }
 
-.member_rating .mod_member_rating_list .col_2 {
+.mod_member_rating_list .col_2 {
 	left: 80px;
 	top: 0;
 	position: relative;

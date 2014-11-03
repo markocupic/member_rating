@@ -24,7 +24,10 @@
                             <?php echo $member['gradeLabel']; ?>
                         </div>
                         <div class="score">
-                            <?php echo $member['score']; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score'] ; ?>
+                            Total: <?php echo $member['score']; ?> <?php echo $GLOBALS['TL_LANG']['MOD']['member_rating']['score'] ; ?>
+                        </div>
+                        <div class="score">
+                            Im Durchschnitt <?php echo $member['averageRating']; ?> Punkte aus <?php echo $member['ratingEnities']; ?> Bewertungen
                         </div>
                         <div class="text">
                             <?php echo $member['firstname']; ?> <?php echo $member['lastname']; ?>

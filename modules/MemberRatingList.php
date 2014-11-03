@@ -84,7 +84,10 @@ class MemberRatingList extends MemberRating
                      }
                      // score and grade
                      $row['score'] = $this->getScore($row['id']);
-                     $row['gradeLabel'] = $this->getGrade($row['id'], 'label');
+				     $row['averageRating'] = $this->getAverageRating($row['id']);
+				  	 $row['ratingEnities'] = $this->getRatingEnities($row['id']);
+
+				  	 $row['gradeLabel'] = $this->getGrade($row['id'], 'label');
                      $row['gradeIcon'] = $this->getGrade($row['id'], 'label');
 
                      // link to detail page
