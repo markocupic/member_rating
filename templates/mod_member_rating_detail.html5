@@ -22,6 +22,8 @@
                 // $this->ratedUser->street;
                 // $this->ratedUser->city;
                 // $this->ratedUser->dateOfBirth;
+                // $this->ratedUser->averageRating;
+                // $this->ratedUser->ratingEinities;
                 // etc...
             ?>
 

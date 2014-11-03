@@ -94,7 +94,10 @@ class MemberRatingLoggedInUsersProfile extends MemberRating
 
                      // get score and grade of logged user
                      $this->loggedInUser->score = $this->getScore($this->loggedInUser->id);
-                     $this->loggedInUser->gradeLabel = $this->getGrade($this->loggedInUser->id, 'label');
+				     $this->loggedInUser->averageRating = $this->getAverageRating($this->loggedInUser->id);
+				     $this->loggedInUser->ratingEnities = $this->getRatingEnities($this->loggedInUser->id);
+
+				     $this->loggedInUser->gradeLabel = $this->getGrade($this->loggedInUser->id, 'label');
                      $this->loggedInUser->gradeIcon = $this->getGrade($this->loggedInUser->id, 'icon');
 
                      // add data to template

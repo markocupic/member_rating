@@ -108,7 +108,10 @@ class MemberRatingDetail extends MemberRating
 
               // get score and grade of rated user
               $this->ratedUser->score = $this->getScore($this->ratedUser->id);
-              $this->ratedUser->gradeLabel = $this->getGrade($this->ratedUser->id, 'label');
+		      $this->ratedUser->averageRating = $this->getAverageRating($this->ratedUser->id);
+		      $this->ratedUser->ratingEnities = $this->getRatingEnities($this->ratedUser->id);
+
+		      $this->ratedUser->gradeLabel = $this->getGrade($this->ratedUser->id, 'label');
               $this->ratedUser->gradeIcon = $this->getGrade($this->ratedUser->id, 'icon');
 
               // add data to template

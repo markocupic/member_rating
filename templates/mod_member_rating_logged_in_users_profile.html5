@@ -41,6 +41,8 @@
             // $this->loggedInUser->street;
             // $this->loggedInUser->city;
             // $this->loggedInUser->dateOfBirth;
+            // $this->loggedInUser->averageRating;
+            // $this->loggedInUser->ratingEinities;
             // etc...
         ?>
         <!-- socialmedia links form -->
