@@ -21,192 +21,214 @@ Controller::loadLanguageFile('tl_member');
 
 // palettes
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'notifyRatedUser';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_list'] = '{title_legend},name,headline,type;{sortOptions::hide},sortingField1,sortingDirection1,sortingField2,sortingDirection2,sortingField3,sortingDirection3;{detailPage:hide},detailPage;{avatar:hide},avatarSizeListing;{template_legend:hide},memberRatingListTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_detail'] = '{title_legend},name,headline,type,showTop3,perPage,blockingTime;{jumpTo_legend:hide},jumpTo;{notify:hide},notifyRatedUser;{avatar:hide},avatarSizeProfile,avatarSizeListing;{template_legend:hide},memberRatingDetailTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'limitUsers';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_list'] = '{title_legend},name,headline,type;{sortOptions::hide},sortingField1,sortingDirection1,sortingField2,sortingDirection2,sortingField3,sortingDirection3;{detailPage:hide},detailPage;{avatar:hide},avatarSizeListing;{limit_user_legend:hide},limitUsers;{template_legend:hide},memberRatingListTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_detail'] = '{title_legend},name,headline,type,showTop3,perPage,blockingTime;{jumpTo_legend:hide},jumpTo;{notify:hide},notifyRatedUser;{limit_user_legend:hide},limitUsers;{avatar:hide},avatarSizeProfile,avatarSizeListing;{template_legend:hide},memberRatingDetailTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['member_rating_logged_in_users_profile'] = '{title_legend},name,headline,type;{avatar:hide},avatarSizeProfile;{template_legend:hide},memberRatingLoggedInUsersProfileTemplate;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['notifyRatedUser'] = 'emailNotifyPage_ActivateComment,emailNotifyPage_DeleteComment';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['limitUsers'] = 'listedGroups';
 
 // fields
 $GLOBALS['TL_DCA']['tl_module']['fields']['detailPage'] = array
 (
-	'label'      => &$GLOBALS['TL_LANG']['tl_module']['detailPage'],
-	'exclude'    => true,
-	'inputType'  => 'pageTree',
-	'foreignKey' => 'tl_page.title',
-	'eval'       => array('fieldType' => 'radio','tl_class' => 'clr'),
-	'sql'        => "int(10) unsigned NOT NULL default '0'",
-	'relation'   => array('type' => 'hasOne','load' => 'lazy')
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['detailPage'],
+    'exclude' => true,
+    'inputType' => 'pageTree',
+    'foreignKey' => 'tl_page.title',
+    'eval' => array('fieldType' => 'radio', 'tl_class' => 'clr'),
+    'sql' => "int(10) unsigned NOT NULL default '0'",
+    'relation' => array('type' => 'hasOne', 'load' => 'lazy')
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['notifyRatedUser'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['notifyRatedUser'],
-	'exclude'   => true,
-	'inputType' => 'checkbox',
-	'eval'      => array('submitOnChange' => true,'tl_class' => 'clr m12'),
-	'sql'       => "char(1) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['notifyRatedUser'],
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => array('submitOnChange' => true, 'tl_class' => 'clr m12'),
+    'sql' => "char(1) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['showTop3'] = array
 (
-       'label'     => &$GLOBALS['TL_LANG']['tl_module']['showTop3'],
-       'exclude'   => true,
-       'inputType' => 'checkbox',
-       'eval'      => array('submitOnChange' => true,'tl_class' => 'clr m12'),
-       'sql'       => "char(1) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['showTop3'],
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'eval' => array('submitOnChange' => true, 'tl_class' => 'clr m12'),
+    'sql' => "char(1) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['emailNotifyPage_ActivateComment'] = array
 (
-	'label'      => &$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_ActivateComment'],
-	'exclude'    => true,
-	'inputType'  => 'pageTree',
-	'foreignKey' => 'tl_page.title',
-	'eval'       => array('fieldType' => 'radio','tl_class' => 'w50'),
-	'sql'        => "int(10) unsigned NOT NULL default '0'",
-	'relation'   => array('type' => 'hasOne','load' => 'lazy')
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_ActivateComment'],
+    'exclude' => true,
+    'inputType' => 'pageTree',
+    'foreignKey' => 'tl_page.title',
+    'eval' => array('fieldType' => 'radio', 'tl_class' => 'w50'),
+    'sql' => "int(10) unsigned NOT NULL default '0'",
+    'relation' => array('type' => 'hasOne', 'load' => 'lazy')
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['emailNotifyPage_DeleteComment'] = array
 (
-	'label'      => &$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_DeleteComment'],
-	'exclude'    => true,
-	'inputType'  => 'pageTree',
-	'foreignKey' => 'tl_page.title',
-	'eval'       => array('fieldType' => 'radio','tl_class' => 'w50'),
-	'sql'        => "int(10) unsigned NOT NULL default '0'",
-	'relation'   => array('type' => 'hasOne','load' => 'lazy')
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['emailNotifyPage_DeleteComment'],
+    'exclude' => true,
+    'inputType' => 'pageTree',
+    'foreignKey' => 'tl_page.title',
+    'eval' => array('fieldType' => 'radio', 'tl_class' => 'w50'),
+    'sql' => "int(10) unsigned NOT NULL default '0'",
+    'relation' => array('type' => 'hasOne', 'load' => 'lazy')
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['blockingTime'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['blockingTime'],
-	'exclude'   => true,
-	'inputType' => 'text',
-	'eval'      => array('fieldType' => 'radio','tl_class' => 'w50'),
-	'sql'       => "int(10) unsigned NOT NULL default '0'",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['blockingTime'],
+    'exclude' => true,
+    'inputType' => 'text',
+    'eval' => array('fieldType' => 'radio', 'tl_class' => 'w50'),
+    'sql' => "int(10) unsigned NOT NULL default '0'",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingField1'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingField1'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_member'],
-	'default'   => 'score',
-	'options'   => array('score','firstname','lastname'),
-	'eval'      => array('includeBlankOption' => true,'tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingField1'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_member'],
+    'default' => 'score',
+    'options' => array('score', 'firstname', 'lastname'),
+    'eval' => array('includeBlankOption' => true, 'tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingField2'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingField2'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_member'],
-	'default'   => 'score',
-	'options'   => array('score','firstname','lastname'),
-	'eval'      => array('includeBlankOption' => true,'tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingField2'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_member'],
+    'default' => 'score',
+    'options' => array('score', 'firstname', 'lastname'),
+    'eval' => array('includeBlankOption' => true, 'tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingField3'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingField3'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_member'],
-	'default'   => 'score',
-	'options'   => array('score','firstname','lastname'),
-	'eval'      => array('includeBlankOption' => true,'tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingField3'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_member'],
+    'default' => 'score',
+    'options' => array('score', 'firstname', 'lastname'),
+    'eval' => array('includeBlankOption' => true, 'tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingDirection1'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection1'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_module'],
-	'default'   => 'SORT_ASC',
-	'options'   => array('SORT_ASC','SORT_DESC'),
-	'eval'      => array('tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection1'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_module'],
+    'default' => 'SORT_ASC',
+    'options' => array('SORT_ASC', 'SORT_DESC'),
+    'eval' => array('tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingDirection2'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection2'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_module'],
-	'default'   => 'SORT_ASC',
-	'options'   => array('SORT_ASC','SORT_DESC'),
-	'eval'      => array('tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection2'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_module'],
+    'default' => 'SORT_ASC',
+    'options' => array('SORT_ASC', 'SORT_DESC'),
+    'eval' => array('tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['sortingDirection3'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection3'],
-	'exclude'   => true,
-	'inputType' => 'select',
-	'reference' => &$GLOBALS['TL_LANG']['tl_module'],
-	'default'   => 'SORT_ASC',
-	'options'   => array('SORT_ASC','SORT_DESC'),
-	'eval'      => array('tl_class' => 'w50'),
-	'sql'       => "varchar(255) NOT NULL default ''",
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['sortingDirection3'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'reference' => &$GLOBALS['TL_LANG']['tl_module'],
+    'default' => 'SORT_ASC',
+    'options' => array('SORT_ASC', 'SORT_DESC'),
+    'eval' => array('tl_class' => 'w50'),
+    'sql' => "varchar(255) NOT NULL default ''",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['avatarSizeProfile'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['avatarSizeProfile'],
-	'exclude'   => true,
-	'inputType' => 'imageSize',
-	'options'   => $GLOBALS['TL_CROP'],
-	'reference' => &$GLOBALS['TL_LANG']['MSC'],
-	'eval'      => array('rgxp' => 'digit','nospace' => true,'helpwizard' => true,'tl_class' => 'w50'),
-	'sql'       => "varchar(64) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['avatarSizeProfile'],
+    'exclude' => true,
+    'inputType' => 'imageSize',
+    'options' => $GLOBALS['TL_CROP'],
+    'reference' => &$GLOBALS['TL_LANG']['MSC'],
+    'eval' => array('rgxp' => 'digit', 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'),
+    'sql' => "varchar(64) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['avatarSizeListing'] = array
 (
-	'label'     => &$GLOBALS['TL_LANG']['tl_module']['avatarSizeListing'],
-	'exclude'   => true,
-	'inputType' => 'imageSize',
-	'options'   => $GLOBALS['TL_CROP'],
-	'reference' => &$GLOBALS['TL_LANG']['MSC'],
-	'eval'      => array('rgxp' => 'digit','nospace' => true,'helpwizard' => true,'tl_class' => 'w50'),
-	'sql'       => "varchar(64) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['avatarSizeListing'],
+    'exclude' => true,
+    'inputType' => 'imageSize',
+    'options' => $GLOBALS['TL_CROP'],
+    'reference' => &$GLOBALS['TL_LANG']['MSC'],
+    'eval' => array('rgxp' => 'digit', 'nospace' => true, 'helpwizard' => true, 'tl_class' => 'w50'),
+    'sql' => "varchar(64) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingListTemplate'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingListTemplate'],
-	'exclude'                 => true,
-	'inputType'               => 'select',
-	'options_callback'        => array('tl_member_rating_module', 'getListTemplates'),
-	'sql'                     => "varchar(64) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['memberRatingListTemplate'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => array('tl_member_rating_module', 'getListTemplates'),
+    'sql' => "varchar(64) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingDetailTemplate'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingDetailTemplate'],
-	'exclude'                 => true,
-	'inputType'               => 'select',
-	'options_callback'        => array('tl_member_rating_module', 'getDetailTemplates'),
-	'sql'                     => "varchar(64) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['memberRatingDetailTemplate'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => array('tl_member_rating_module', 'getDetailTemplates'),
+    'sql' => "varchar(64) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingLoggedInUsersProfileTemplate'] = array
 (
-       'label'                   => &$GLOBALS['TL_LANG']['tl_module']['memberRatingLoggedInUsersProfileTemplate'],
-       'exclude'                 => true,
-       'inputType'               => 'select',
-       'options_callback'        => array('tl_member_rating_module', 'getLoggedInUsersProfileTemplates'),
-       'sql'                     => "varchar(64) NOT NULL default ''"
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['memberRatingLoggedInUsersProfileTemplate'],
+    'exclude' => true,
+    'inputType' => 'select',
+    'options_callback' => array('tl_member_rating_module', 'getLoggedInUsersProfileTemplates'),
+    'sql' => "varchar(64) NOT NULL default ''"
 );
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['limitUsers'] = array
+(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['limitUsers'],
+    'exclude' => true,
+    'filter' => true,
+    'inputType' => 'checkbox',
+    'eval' => array('submitOnChange' => true),
+    'sql' => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['listedGroups'] = array
+(
+    'label' => &$GLOBALS['TL_LANG']['tl_module']['listedGroups'],
+    'exclude' => true,
+    'inputType' => 'checkbox',
+    'foreignKey' => 'tl_member_group.name',
+    'eval' => array('mandatory' => true, 'multiple' => true),
+    'sql' => "blob NULL",
+    'relation' => array('type' => 'hasMany', 'load' => 'lazy')
+);
 
 
 /**
@@ -220,37 +242,37 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['memberRatingLoggedInUsersProfileTempl
 class tl_member_rating_module extends Backend
 {
 
-	/**
-	 * Return templates as array
-	 *
-	 * @return array
-	 */
-	public function getListTemplates()
-	{
-		return $this->getTemplateGroup('mod_member_rating_list');
-	}
+    /**
+     * Return templates as array
+     *
+     * @return array
+     */
+    public function getListTemplates()
+    {
+        return $this->getTemplateGroup('mod_member_rating_list');
+    }
 
 
-	/**
-	 * Return templates as array
-	 *
-	 * @return array
-	 */
-	public function getDetailTemplates()
-	{
-		return $this->getTemplateGroup('mod_member_rating_detail');
-	}
+    /**
+     * Return templates as array
+     *
+     * @return array
+     */
+    public function getDetailTemplates()
+    {
+        return $this->getTemplateGroup('mod_member_rating_detail');
+    }
 
 
-       /**
-        * Return templates as array
-        *
-        * @return array
-        */
-       public function getLoggedInUsersProfileTemplates()
-       {
-              return $this->getTemplateGroup('mod_member_rating_logged_in_users_profile');
-       }
+    /**
+     * Return templates as array
+     *
+     * @return array
+     */
+    public function getLoggedInUsersProfileTemplates()
+    {
+        return $this->getTemplateGroup('mod_member_rating_logged_in_users_profile');
+    }
 
 
 }

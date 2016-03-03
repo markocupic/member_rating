@@ -72,7 +72,8 @@ if (!file_exists(TL_ROOT . '/system/modules/avatar'))
        $GLOBALS['TL_DCA']['tl_member']['fields']['avatar'] = array(
               'label' => &$GLOBALS['TL_LANG']['tl_member']['avatar'],
               'exclude' => true,
-              'inputType' => 'text',
+              'inputType'               => 'fileTree',
+              //'inputType' => 'text',
               'eval' => array(
                      'fieldType' => 'radio',
                      'filesOnly' => true,

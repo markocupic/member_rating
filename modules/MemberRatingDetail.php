@@ -168,6 +168,19 @@ class MemberRatingDetail extends MemberRating
               while ($row = $objRatings->fetchAssoc())
               {
                      $objMember = \MemberModel::findByPk($row['owner']);
+
+                     // Show only Members from a selected group
+                     if($this->limitUsers)
+                     {
+                            $arrGroups = deserialize($this->listedGroups);
+                            if(count(array_intersect(deserialize($objMember->groups), $arrGroups)) < 1)
+                            {
+                                   continue;
+                            }
+                     }
+
+
+
                      $row['time'] = \Date::parse(\Config::get('datimFormat'), $row['dateOfCreation']);
                      if ($objMember !== null)
                      {

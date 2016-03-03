@@ -98,6 +98,20 @@ class MemberRatingList extends MemberRating
                      $title = $row['firstname'] . ' ' . $row['lastname'];
                      $row['avatar'] = $this->getAvatar($objMember->id, $arrSize, 'avatar', $title, 'avatar_thumb', $this);
 
+                     // Show only Members from a selected group
+                     if($this->limitUsers)
+                     {
+                            $arrGroups = deserialize($this->listedGroups);
+                            $oMember = \MemberModel::findByPk($objMember->id);
+                            if($oMember !== null)
+                            {
+                                   if(count(array_intersect(deserialize($oMember->groups), $arrGroups)) < 1)
+                                   {
+                                          continue;
+                                   }
+                            }
+                     }
+
                      $arrRows[] = $row;
               }
 
